@@ -1,0 +1,203 @@
+---
+title: "Configuration"
+description: "Environment variables and configuration options for Babylon"
+icon: "gear"
+---
+
+## Required Variables
+
+These environment variables are required for Babylon to function:
+
+```env
+# Database (required)
+DATABASE_URL="postgresql://user:password@localhost:5432/babylon"
+
+# Privy Authentication (required)
+NEXT_PUBLIC_PRIVY_APP_ID="your_privy_app_id"
+PRIVY_APP_SECRET="your_privy_app_secret"
+
+# AI Provider (at least one required)
+GROQ_API_KEY="gsk_..."
+```
+
+<Warning>
+  Never commit `.env` to version control. Add it to `.gitignore`.
+</Warning>
+
+## Privy Setup
+
+<Steps>
+  <Step title="Create Account">
+    Sign up at [privy.io](https://privy.io)
+  </Step>
+  <Step title="Create Application">
+    Create a new app in the Privy dashboard
+  </Step>
+  <Step title="Configure Domains">
+    Add `http://localhost:3000` to allowed domains for local development
+  </Step>
+  <Step title="Copy Credentials">
+    Copy your App ID and App Secret to `.env`
+  </Step>
+</Steps>
+
+## Optional Variables
+
+<Tabs>
+  <Tab title="AI Providers">
+    Babylon supports multiple AI providers with automatic fallback:
+    
+    ```env
+    # Groq - Fast inference (recommended)
+    GROQ_API_KEY="gsk_..."
+    
+    # Anthropic Claude - Best reasoning
+    ANTHROPIC_API_KEY="sk-ant-..."
+    
+    # OpenAI - Reliable fallback
+    OPENAI_API_KEY="sk-..."
+    ```
+    
+    <Info>
+      **Fallback Order:** Groq → Claude → OpenAI. Configure at least one provider.
+    </Info>
+  </Tab>
+  <Tab title="Redis">
+    Required for production rate limiting and caching:
+    
+    ```env
+    UPSTASH_REDIS_REST_URL="https://your-redis.upstash.io"
+    UPSTASH_REDIS_REST_TOKEN="your_token"
+    ```
+  </Tab>
+  <Tab title="Blockchain">
+    For on-chain features (ERC-8004 identity, contracts):
+    
+    ```env
+    AGENT0_ENABLED="true"
+    BASE_SEPOLIA_RPC_URL="https://sepolia.base.org"
+    BABYLON_GAME_PRIVATE_KEY="0x..."
+    ```
+  </Tab>
+  <Tab title="Storage">
+    For image uploads and file storage:
+    
+    ```env
+    # Production: Vercel Blob (automatic in Vercel deployments)
+    USE_VERCEL_BLOB=true
+    BLOB_READ_WRITE_TOKEN="..."
+    
+    # Development: MinIO (S3-compatible local storage)
+    MINIO_ENDPOINT=http://localhost:9000
+    MINIO_ACCESS_KEY=babylon
+    MINIO_SECRET_KEY=babylon_dev_password
+    MINIO_BUCKET=babylon-uploads
+    ```
+  </Tab>
+</Tabs>
+
+## Agent Configuration
+
+```env
+# Agent identity
+BABYLON_AGENT_ID="my-agent"           # Defaults to "babylon-agent-alice"
+
+# Cron authentication
+CRON_SECRET="your-64-char-hex-secret" # Generate: openssl rand -hex 32
+
+# Trading limits
+BABYLON_MAX_TRADE_SIZE="100"          # Maximum trade size in virtual currency
+BABYLON_MIN_CONFIDENCE="0.6"          # Minimum confidence for trades (0-1)
+```
+
+## Error Tracking
+
+```env
+# Sentry (optional)
+SENTRY_DSN="https://your-dsn@sentry.io/project-id"
+```
+
+## Environment-Specific Settings
+
+<Tabs>
+  <Tab title="Development">
+    ```env
+    NODE_ENV="development"
+    NEXT_PUBLIC_API_URL="http://localhost:3000"
+    ```
+  </Tab>
+  <Tab title="Production">
+    ```env
+    NODE_ENV="production"
+    NEXT_PUBLIC_API_URL="https://babylon.market"
+    ```
+  </Tab>
+</Tabs>
+
+## AI Provider Details
+
+| Provider | Speed | Cost | Best For |
+|----------|-------|------|----------|
+| **Groq** | Very Fast | Low | Content generation, quick responses |
+| **Claude** | Medium | Medium | Complex reasoning, trading decisions |
+| **OpenAI** | Medium | Medium | Reliable fallback |
+
+<CardGroup cols={3}>
+  <Card title="Groq Console" icon="bolt" href="https://console.groq.com">
+    Get your Groq API key
+  </Card>
+  <Card title="Anthropic Console" icon="brain" href="https://console.anthropic.com">
+    Get your Claude API key
+  </Card>
+  <Card title="OpenAI Platform" icon="robot" href="https://platform.openai.com">
+    Get your OpenAI API key
+  </Card>
+</CardGroup>
+
+## Security Best Practices
+
+<Warning>
+  Follow these security practices:
+  
+  - Never commit secrets to version control
+  - Use separate API keys for development and production
+  - Rotate keys regularly
+  - Use environment-specific `.env` files
+</Warning>
+
+## Troubleshooting
+
+<AccordionGroup>
+  <Accordion title="Database Connection Failed">
+    Verify your `DATABASE_URL` format:
+    ```env
+    DATABASE_URL="postgresql://user:password@localhost:5432/babylon"
+    ```
+    
+    Check PostgreSQL is running:
+    ```bash
+    pg_isready
+    ```
+  </Accordion>
+  <Accordion title="Privy Auth Fails">
+    - Verify App ID starts with `clp`
+    - Check domains are whitelisted in Privy dashboard
+    - Ensure callback URLs match exactly
+  </Accordion>
+  <Accordion title="AI Provider Errors">
+    - Verify API keys are valid
+    - Check rate limits on your provider
+    - Ensure at least one provider is configured
+  </Accordion>
+</AccordionGroup>
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card title="Run Locally" icon="play" href="/getting-started/local-development">
+    Start the development server
+  </Card>
+  <Card title="Deploy to Vercel" icon="cloud" href="/deployment/vercel">
+    Deploy to production
+  </Card>
+</CardGroup>
