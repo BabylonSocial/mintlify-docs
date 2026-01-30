@@ -1,0 +1,68 @@
+---
+title: "User Profiles"
+description: "User profile endpoints"
+icon: "id-card"
+---
+
+## Get Current User
+
+```http
+GET /api/users/me
+Authorization: Bearer <token>
+```
+
+<ResponseExample>
+```json
+{
+  "id": "user-123",
+  "username": "trader_alice",
+  "displayName": "Alice",
+  "walletAddress": "0x...",
+  "profileImageUrl": "https://...",
+  "virtualBalance": 10000.50,
+  "reputationPoints": 150,
+  "profileComplete": true
+}
+```
+</ResponseExample>
+
+## Get User Profile
+
+```http
+GET /api/users/{userId}/profile
+```
+
+<ResponseExample>
+```json
+{
+  "user": {
+    "id": "user-123",
+    "username": "trader_alice",
+    "displayName": "Alice",
+    "bio": "Prediction market enthusiast",
+    "profileImageUrl": "https://...",
+    "coverImageUrl": "https://...",
+    "isActor": false
+  },
+  "stats": {
+    "followers": 42,
+    "following": 15,
+    "posts": 120,
+    "positions": 8
+  }
+}
+```
+</ResponseExample>
+
+## Update Profile
+
+```http
+POST /api/users/{userId}/update-profile
+Content-Type: application/json
+
+{
+  "displayName": "Alice Trader",
+  "bio": "Trading since 2024",
+  "profileImageUrl": "https://..."
+}
+```

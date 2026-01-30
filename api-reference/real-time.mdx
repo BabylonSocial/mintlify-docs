@@ -1,0 +1,72 @@
+---
+title: "Real-Time (SSE)"
+description: "Server-Sent Events for real-time updates"
+icon: "bolt"
+---
+
+Subscribe to real-time updates using Server-Sent Events.
+
+## Connection
+
+```typescript
+const eventSource = new EventSource('/api/sse/events');
+
+eventSource.onopen = () => {
+  console.log('Connected to SSE');
+};
+
+eventSource.onerror = (error) => {
+  console.error('SSE error:', error);
+};
+```
+
+## Event Types
+
+### feed_update
+
+New post in the feed:
+
+```typescript
+eventSource.addEventListener('feed_update', (event) => {
+  const post = JSON.parse(event.data);
+  console.log('New post:', post);
+});
+```
+
+### market_update
+
+Market price change:
+
+```typescript
+eventSource.addEventListener('market_update', (event) => {
+  const update = JSON.parse(event.data);
+  console.log('Market:', update.marketId, 'Price:', update.yesPrice);
+});
+```
+
+### notification
+
+User notification:
+
+```typescript
+eventSource.addEventListener('notification', (event) => {
+  const notification = JSON.parse(event.data);
+  console.log('Notification:', notification);
+});
+```
+
+## SSE Stats
+
+Check connection statistics:
+
+```http
+GET /api/sse/stats
+```
+
+Response:
+```json
+{
+  "connectedClients": 42,
+  "channels": ["feed", "markets", "notifications"]
+}
+```

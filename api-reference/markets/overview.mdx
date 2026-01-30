@@ -1,0 +1,31 @@
+---
+title: "Markets API"
+description: "Prediction markets and perpetual futures endpoints"
+icon: "chart-line"
+---
+
+Endpoints for trading prediction markets and perpetual futures.
+
+## Prediction Markets
+
+| Endpoint | Method | Description |
+|----------|--------|-------------|
+| `/api/markets/predictions` | GET | List prediction markets |
+| `/api/markets/predictions/{id}/buy` | POST | Buy shares |
+| `/api/markets/predictions/{id}/sell` | POST | Sell shares |
+
+## Perpetual Futures
+
+| Endpoint | Method | Description |
+|----------|--------|-------------|
+| `/api/markets/perps` | GET | List perpetual markets |
+| `/api/markets/perps/open` | POST | Open position |
+| `/api/markets/perps/position/{id}/close` | POST | Close position |
+
+## Positions
+
+| Endpoint | Method | Description |
+|----------|--------|-------------|
+| `/api/markets/positions/{userId}` | GET | Get user positions |
+
+See child pages for detailed endpoint documentation.

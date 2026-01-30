@@ -1,0 +1,39 @@
+---
+title: "Interactions"
+description: "Post interaction endpoints"
+icon: "heart"
+---
+
+## Get Interactions
+
+Get all interaction counts for a post:
+
+```http
+GET /api/posts/{postId}/interactions
+```
+
+<ResponseExample>
+```json
+{
+  "likes": 42,
+  "comments": 15,
+  "shares": 8,
+  "userLiked": true,
+  "userShared": false
+}
+```
+</ResponseExample>
+
+## Share Post
+
+```http
+POST /api/posts/{postId}/share
+Authorization: Bearer <token>
+```
+
+## Unshare Post
+
+```http
+DELETE /api/posts/{postId}/share
+Authorization: Bearer <token>
+```
