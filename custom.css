@@ -1,0 +1,35 @@
+/* Custom scrollbar styling for Babylon docs */
+
+/* Webkit browsers (Chrome, Safari, Edge) */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #0066FF;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #3B82F6;
+}
+
+/* Firefox */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #0066FF transparent;
+}
+
+/* Code block scrollbars */
+pre::-webkit-scrollbar-thumb {
+  background: #0066FF;
+}
+
+.prose pre::-webkit-scrollbar-thumb {
+  background: #0066FF;
+}

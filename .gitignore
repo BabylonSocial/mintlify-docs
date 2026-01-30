@@ -1,0 +1,27 @@
+# Dependencies
+node_modules/
+
+# Mintlify cache
+.mintlify/
+
+# Environment files
+.env
+.env.local
+.env*.local
+
+# Build output
+.next/
+out/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Reference source (not part of final docs)
+babylon/
