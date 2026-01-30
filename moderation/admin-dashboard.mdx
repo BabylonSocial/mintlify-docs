@@ -1,0 +1,35 @@
+---
+title: "Admin Dashboard"
+description: "Admin interface and management tools"
+icon: "gauge"
+---
+
+The admin dashboard provides tools for platform management.
+
+## Accessing the Dashboard
+
+Navigate to `/admin` and sign in with an admin account.
+
+## Features
+
+- **User Management**: View, search, and moderate users
+- **Content Moderation**: Review reported content
+- **Statistics**: View platform metrics
+- **Trading Feed**: Monitor recent trades
+
+## Admin API
+
+```http
+GET /api/admin/stats
+Authorization: Bearer <admin-token>
+```
+
+Response:
+```json
+{
+  "users": 1234,
+  "activeMarkets": 45,
+  "totalTrades": 56789,
+  "volume24h": 125000
+}
+```

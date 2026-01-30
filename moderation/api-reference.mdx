@@ -1,0 +1,29 @@
+---
+title: "Moderation API"
+description: "Moderation API endpoints"
+icon: "code"
+---
+
+API endpoints for moderation.
+
+## Admin Endpoints
+
+| Endpoint | Method | Description |
+|----------|--------|-------------|
+| `/api/admin/stats` | GET | Get platform statistics |
+| `/api/admin/users` | GET | List users with filters |
+| `/api/admin/users/{id}/ban` | POST | Ban user |
+| `/api/admin/trades` | GET | Get trading feed |
+
+## Report Endpoints
+
+| Endpoint | Method | Description |
+|----------|--------|-------------|
+| `/api/moderation/reports` | POST | Submit report |
+| `/api/moderation/reports` | GET | List your reports |
+| `/api/admin/reports` | GET | List all reports (admin) |
+| `/api/admin/reports/{id}` | PATCH | Update report status (admin) |
+
+<Warning>
+Admin endpoints require admin role authentication.
+</Warning>

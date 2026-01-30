@@ -1,0 +1,38 @@
+---
+title: "User Actions"
+description: "User moderation actions"
+icon: "user"
+---
+
+Actions available for moderating users.
+
+## Ban User
+
+```http
+POST /api/admin/users/{userId}/ban
+Content-Type: application/json
+Authorization: Bearer <admin-token>
+
+{
+  "reason": "Spam",
+  "duration": 86400
+}
+```
+
+## Unban User
+
+Reverse a ban:
+
+```http
+POST /api/admin/users/{userId}/ban
+Content-Type: application/json
+Authorization: Bearer <admin-token>
+
+{
+  "action": "unban"
+}
+```
+
+<Note>
+Mute and warn functionality can be implemented via the reporting system at `/api/moderation/reports`.
+</Note>
