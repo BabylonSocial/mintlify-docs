@@ -1,0 +1,56 @@
+---
+title: "Validation Commands"
+description: "Data validation and checking tools"
+icon: "check"
+---
+
+Commands for validating data and checking system state.
+
+## Game Validation (babylon game)
+
+| Command | Description |
+|---------|-------------|
+| `babylon game validate` | Validate actor data integrity |
+
+Validates that all actor affiliations reference valid organization IDs.
+
+## System Status (babylon status)
+
+| Command | Description |
+|---------|-------------|
+| `babylon status` | Show all system status |
+| `babylon status game` | Game status only |
+| `babylon status wallet` | Wallet and blockchain status |
+| `babylon status llm` | LLM provider availability |
+
+## Database Checks (babylon db)
+
+| Command | Description |
+|---------|-------------|
+| `babylon db status` | Check database connection and health |
+
+## Examples
+
+```bash
+# Validate actor affiliations
+babylon game validate
+
+# Check all system status
+babylon status
+
+# Check database connection
+babylon db status
+```
+
+## Output
+
+Validation commands output results to console:
+
+```
+✅ All actor affiliations are valid!
+
+Game Status:
+  Status: ✅ RUNNING
+  Current Day: 15
+  Active Questions: 3
+```

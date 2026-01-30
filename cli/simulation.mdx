@@ -1,0 +1,74 @@
+---
+title: "Simulation Commands"
+description: "Testing and simulation tools"
+icon: "flask"
+---
+
+Commands for testing agents and simulating scenarios.
+
+## Game Simulation (babylon game)
+
+| Command | Description |
+|---------|-------------|
+| `babylon game simulate` | Run game simulation |
+
+### Options
+
+| Option | Description |
+|--------|-------------|
+| `--outcome=YES\|NO` | Predetermined outcome (default: YES) |
+| `--count=N` | Number of simulations (default: 1) |
+| `--fast` | Skip detailed logging |
+| `--save=FILE` | Save game data to file |
+| `--json` | Output JSON only |
+
+## Training Simulation (babylon train)
+
+| Command | Description |
+|---------|-------------|
+| `babylon train generate` | Generate synthetic trajectories (testing only) |
+| `babylon train parallel` | Generate real trajectories with parallel agents |
+| `babylon train collect` | Collect trajectories from live agents |
+
+### Options
+
+| Option | Description |
+|--------|-------------|
+| `-e, --episodes=N` | Number of game episodes (default: 5) |
+| `-t, --ticks=N` | Ticks per episode (default: 50) |
+| `-b, --balance=N` | Starting balance per agent (default: 10000) |
+
+## Load Testing (babylon test)
+
+| Command | Description |
+|---------|-------------|
+| `babylon test load` | Run load tests against the server |
+| `babylon test a2a` | Run A2A protocol stress tests |
+
+### Options
+
+| Option | Description |
+|--------|-------------|
+| `--scenario=NAME` | Test scenario: light, normal, heavy, stress |
+| `--url=URL` | Base URL (default: http://localhost:3000) |
+
+## Examples
+
+```bash
+# Run game simulation
+babylon game simulate --count=10
+
+# Generate training trajectories
+babylon train generate --episodes=5 --ticks=50
+
+# Run load test
+babylon test load --scenario=heavy
+```
+
+## Output
+
+Simulations output results including:
+- Actions taken
+- P&L calculations
+- Performance metrics
+- Trajectory data for training

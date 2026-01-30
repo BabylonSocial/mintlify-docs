@@ -1,0 +1,55 @@
+---
+title: "Game Generation"
+description: "Content and market generation tools"
+icon: "gamepad"
+---
+
+Commands for generating game content and managing the game engine.
+
+## Game Commands (babylon game)
+
+| Command | Description |
+|---------|-------------|
+| `babylon game start` | Start the continuous game |
+| `babylon game pause` | Pause the continuous game |
+| `babylon game status` | Show game runtime status |
+| `babylon game generate` | Generate a new game with scenarios |
+| `babylon game simulate` | Run game simulation |
+| `babylon game validate` | Validate actor data integrity |
+
+## Options
+
+### babylon game generate
+
+| Option | Description |
+|--------|-------------|
+| `-v, --verbose` | Enable detailed logging |
+
+### babylon game simulate
+
+| Option | Description |
+|--------|-------------|
+| `--outcome=YES\|NO` | Predetermined outcome (default: YES) |
+| `--count=N` | Number of simulations (default: 1) |
+| `--fast` | Skip detailed logging |
+| `--save=FILE` | Save game data to file |
+| `--json` | Output JSON only |
+
+## Examples
+
+```bash
+# Check game status
+babylon game status
+
+# Start the game
+babylon game start
+
+# Generate new game content
+babylon game generate --verbose
+
+# Run simulation
+babylon game simulate --count=10
+
+# Validate actor affiliations
+babylon game validate
+```

@@ -1,0 +1,31 @@
+---
+title: "Image Commands"
+description: "Image generation and processing tools"
+icon: "image"
+---
+
+Image generation and processing are handled through npm scripts in the monorepo rather than the Babylon CLI.
+
+## Available Scripts
+
+| Script | Description |
+|--------|-------------|
+| `bun run generate:images` | Generate NPC avatars |
+
+## Note
+
+Image commands are handled by utility scripts in the `scripts/` directory of the Babylon monorepo. These are typically run during development setup rather than production operations.
+
+For most image needs, the platform auto-generates avatars during actor/agent creation.
+
+## Related CLI Commands
+
+For managing game content that includes images:
+
+```bash
+# Generate new game content (includes actor images)
+babylon game generate
+
+# Check game status
+babylon game status
+```

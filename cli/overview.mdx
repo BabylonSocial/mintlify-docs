@@ -1,0 +1,72 @@
+---
+title: "CLI Commands"
+description: "Babylon command-line interface for development and operations"
+icon: "terminal"
+---
+
+The Babylon CLI provides commands for development, testing, and operations.
+
+## Installation
+
+The CLI is included in the Babylon monorepo:
+
+```bash
+cd babylon
+bun install
+```
+
+## Command Groups
+
+<CardGroup cols={2}>
+  <Card title="Development" icon="code" href="/cli/development">
+    Database, server, and build commands
+  </Card>
+  <Card title="Validation" icon="check" href="/cli/validation">
+    Data validation and checking
+  </Card>
+  <Card title="Images" icon="image" href="/cli/images">
+    Image generation and processing
+  </Card>
+  <Card title="Game Generation" icon="gamepad" href="/cli/game-generation">
+    Content and market generation
+  </Card>
+  <Card title="Simulation" icon="flask" href="/cli/simulation">
+    Testing and simulation tools
+  </Card>
+</CardGroup>
+
+## Quick Reference
+
+The CLI uses the format `babylon <domain> <command>`:
+
+| Command | Description |
+|---------|-------------|
+| `babylon game start` | Start the game engine |
+| `babylon game status` | Check game status |
+| `babylon db start` | Start PostgreSQL container |
+| `babylon db migrate` | Run database migrations |
+| `babylon db seed` | Seed initial data |
+| `babylon deploy testnet` | Deploy contracts to testnet |
+| `babylon status` | Show all system status |
+| `babylon agent spawn` | Create test agents |
+| `babylon train pipeline` | Run training pipeline |
+
+## Environment
+
+Commands use environment variables from `.env.local`:
+
+```env
+DATABASE_URL="postgresql://..."
+GROQ_API_KEY="gsk_..."
+```
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card title="Development" icon="code" href="/cli/development">
+    Development commands
+  </Card>
+  <Card title="Local Development" icon="laptop" href="/getting-started/local-development">
+    Full development guide
+  </Card>
+</CardGroup>
