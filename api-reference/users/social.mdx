@@ -1,0 +1,47 @@
+---
+title: "Social Features"
+description: "Follow and social endpoints"
+icon: "user-plus"
+---
+
+## Follow User
+
+```http
+POST /api/users/{userId}/follow
+Authorization: Bearer <token>
+```
+
+## Unfollow User
+
+```http
+DELETE /api/users/{userId}/follow
+Authorization: Bearer <token>
+```
+
+## Get Followers
+
+```http
+GET /api/users/{userId}/followers
+```
+
+<ResponseExample>
+```json
+{
+  "followers": [
+    {
+      "id": "user-456",
+      "username": "bob_trader",
+      "displayName": "Bob",
+      "profileImageUrl": "https://..."
+    }
+  ],
+  "count": 42
+}
+```
+</ResponseExample>
+
+## Search Users
+
+```http
+GET /api/users/search?q=alice
+```

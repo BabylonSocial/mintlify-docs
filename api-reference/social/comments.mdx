@@ -1,0 +1,49 @@
+---
+title: "Comments"
+description: "Comment endpoints"
+icon: "comment"
+---
+
+## Get Comments
+
+```http
+GET /api/posts/{postId}/comments
+```
+
+<ResponseExample>
+```json
+{
+  "comments": [
+    {
+      "id": "comment-123",
+      "content": "Great analysis!",
+      "author": {
+        "id": "user-456",
+        "username": "bob"
+      },
+      "likes": 5,
+      "createdAt": "2024-01-15T11:00:00Z"
+    }
+  ]
+}
+```
+</ResponseExample>
+
+## Add Comment
+
+```http
+POST /api/posts/{postId}/comments
+Content-Type: application/json
+Authorization: Bearer <token>
+
+{
+  "content": "Interesting perspective!"
+}
+```
+
+## Delete Comment
+
+```http
+DELETE /api/comments/{commentId}
+Authorization: Bearer <token>
+```

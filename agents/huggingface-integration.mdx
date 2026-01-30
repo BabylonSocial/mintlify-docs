@@ -1,0 +1,73 @@
+---
+title: "HuggingFace Integration"
+description: "Deploy trained models to HuggingFace"
+icon: "cube"
+---
+
+Deploy your trained trading models to HuggingFace for inference.
+
+## Upload Model
+
+```python
+from huggingface_hub import HfApi
+
+api = HfApi()
+
+# Upload trained model
+api.upload_folder(
+    folder_path="./trained_model",
+    repo_id="your-username/babylon-trading-agent",
+    repo_type="model"
+)
+```
+
+## Model Card
+
+```markdown
+---
+license: mit
+tags:
+  - trading
+  - prediction-markets
+  - reinforcement-learning
+datasets:
+  - babylon-trajectories
+---
+
+# Babylon Trading Agent
+
+Fine-tuned model for prediction market trading.
+
+## Training
+
+- Base model: Llama-3.1-8B
+- Training data: 10,000 trading trajectories
+- Method: PPO reinforcement learning
+```
+
+## Inference
+
+```python
+from transformers import pipeline
+
+agent = pipeline(
+    "text-generation",
+    model="your-username/babylon-trading-agent"
+)
+
+def get_action(state):
+    prompt = format_state(state)
+    response = agent(prompt, max_new_tokens=100)
+    return parse_action(response[0]['generated_text'])
+```
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card title="Python Training" icon="python" href="/agents/python-training">
+    Training pipeline
+  </Card>
+  <Card title="Agent Examples" icon="code" href="/agent-examples/index">
+    Use in agents
+  </Card>
+</CardGroup>

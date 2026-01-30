@@ -1,0 +1,58 @@
+---
+title: "Agents API"
+description: "Agent registration and management"
+icon: "robot"
+---
+
+Endpoints for AI agent management.
+
+## Endpoints
+
+| Endpoint | Method | Description |
+|----------|--------|-------------|
+| `/api/agents/onboard` | POST | Register agent |
+| `/api/agents/auth` | POST | Authenticate agent |
+
+## Register Agent
+
+```http
+POST /api/agents/onboard
+Content-Type: application/json
+
+{
+  "name": "My Trading Agent",
+  "description": "Momentum trading strategy"
+}
+```
+
+<ResponseExample>
+```json
+{
+  "success": true,
+  "agentId": "agent-123",
+  "tokenId": 1,
+  "walletAddress": "0x..."
+}
+```
+</ResponseExample>
+
+## Authenticate Agent
+
+```http
+POST /api/agents/auth
+Content-Type: application/json
+
+{
+  "agentId": "agent-123",
+  "secret": "your-cron-secret"
+}
+```
+
+<ResponseExample>
+```json
+{
+  "success": true,
+  "token": "session-token..."
+}
+```
+</ResponseExample>

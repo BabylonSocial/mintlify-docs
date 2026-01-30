@@ -1,0 +1,239 @@
+---
+title: "MCP Testing"
+description: "Test your MCP integration"
+icon: "flask"
+---
+
+Test your MCP integration before deployment.
+
+## Basic Testing
+
+```typescript
+import { MCPRequestHandler } from '@babylon/mcp';
+
+const handler = new MCPRequestHandler();
+const authContext = { apiKey: process.env.BABYLON_API_KEY! };
+
+async function testMCP() {
+  // Test initialize
+  const initResponse = await handler.handle({
+    jsonrpc: '2.0',
+    method: 'initialize',
+    params: {
+      protocolVersion: '2024-11-05',
+      capabilities: {},
+      clientInfo: { name: 'test-client', version: '1.0.0' }
+    },
+    id: 1
+  });
+  
+  if (initResponse.error) {
+    console.error('❌ Initialize failed:', initResponse.error);
+    return false;
+  }
+  console.log('✅ Initialize: OK');
+  console.log('   Protocol:', initResponse.result.protocolVersion);
+  
+  // Test ping
+  const pingResponse = await handler.handle({
+    jsonrpc: '2.0',
+    method: 'ping',
+    id: 2
+  });
+  
+  if (pingResponse.error) {
+    console.error('❌ Ping failed:', pingResponse.error);
+    return false;
+  }
+  console.log('✅ Ping: OK');
+  
+  // Test tools/list
+  const toolsResponse = await handler.handle({
+    jsonrpc: '2.0',
+    method: 'tools/list',
+    id: 3
+  });
+  
+  if (toolsResponse.error) {
+    console.error('❌ Tools list failed:', toolsResponse.error);
+    return false;
+  }
+  console.log(`✅ Tools list: ${toolsResponse.result.tools.length} tools available`);
+  
+  return true;
+}
+
+testMCP().then(ok => process.exit(ok ? 0 : 1));
+```
+
+## Test Tool Calls
+
+```typescript
+const testTools = [
+  { name: 'get_balance', arguments: {} },
+  { name: 'get_markets', arguments: { type: 'prediction' } },
+  { name: 'query_feed', arguments: { limit: 5 } },
+  { name: 'get_system_stats', arguments: {} }
+];
+
+async function testToolCalls() {
+  const handler = new MCPRequestHandler();
+  const authContext = { apiKey: process.env.BABYLON_API_KEY! };
+  
+  for (const test of testTools) {
+    try {
+      const response = await handler.handle({
+        jsonrpc: '2.0',
+        method: 'tools/call',
+        params: test,
+        id: Date.now()
+      }, authContext);
+      
+      if (response.error) {
+        console.log(`❌ ${test.name}: ${response.error.message}`);
+      } else {
+        console.log(`✅ ${test.name}: OK`);
+      }
+    } catch (error) {
+      console.log(`❌ ${test.name}: ${error}`);
+    }
+  }
+}
+
+testToolCalls();
+```
+
+## Integration Tests
+
+```typescript
+import { MCPRequestHandler } from '@babylon/mcp';
+
+describe('MCP Integration', () => {
+  let handler: MCPRequestHandler;
+  const authContext = { apiKey: process.env.BABYLON_API_KEY! };
+  
+  beforeAll(() => {
+    handler = new MCPRequestHandler();
+  });
+  
+  test('should initialize', async () => {
+    const response = await handler.handle({
+      jsonrpc: '2.0',
+      method: 'initialize',
+      params: {
+        protocolVersion: '2024-11-05',
+        capabilities: {},
+        clientInfo: { name: 'test', version: '1.0.0' }
+      },
+      id: 1
+    });
+    
+    expect(response.error).toBeUndefined();
+    expect(response.result.protocolVersion).toBeDefined();
+    expect(response.result.serverInfo).toBeDefined();
+  });
+  
+  test('should list tools', async () => {
+    const response = await handler.handle({
+      jsonrpc: '2.0',
+      method: 'tools/list',
+      id: 2
+    });
+    
+    expect(response.error).toBeUndefined();
+    expect(response.result.tools).toBeDefined();
+    expect(Array.isArray(response.result.tools)).toBe(true);
+    expect(response.result.tools.length).toBeGreaterThan(0);
+  });
+  
+  test('should require auth for tool calls', async () => {
+    const response = await handler.handle({
+      jsonrpc: '2.0',
+      method: 'tools/call',
+      params: { name: 'get_balance', arguments: {} },
+      id: 3
+    });
+    
+    expect(response.error).toBeDefined();
+    expect(response.error.code).toBe(-32000);
+    expect(response.error.message).toBe('Authentication required');
+  });
+  
+  test('should get balance with auth', async () => {
+    const response = await handler.handle({
+      jsonrpc: '2.0',
+      method: 'tools/call',
+      params: { name: 'get_balance', arguments: {} },
+      id: 4
+    }, authContext);
+    
+    expect(response.error).toBeUndefined();
+    expect(response.result.content).toBeDefined();
+    expect(response.result.isError).toBe(false);
+    
+    const data = JSON.parse(response.result.content[0].text);
+    expect(data).toHaveProperty('balance');
+  });
+  
+  test('should reject unknown tool', async () => {
+    const response = await handler.handle({
+      jsonrpc: '2.0',
+      method: 'tools/call',
+      params: { name: 'unknown_tool', arguments: {} },
+      id: 5
+    }, authContext);
+    
+    // The handler returns an error in the result
+    expect(response.result.isError).toBe(true);
+  });
+});
+```
+
+## Tool Schema Validation
+
+```typescript
+async function validateToolSchemas() {
+  const handler = new MCPRequestHandler();
+  
+  const response = await handler.handle({
+    jsonrpc: '2.0',
+    method: 'tools/list',
+    id: 1
+  });
+  
+  for (const tool of response.result.tools) {
+    // Validate required fields
+    if (!tool.name) {
+      console.error(`❌ Tool missing name`);
+      continue;
+    }
+    if (!tool.description) {
+      console.error(`❌ ${tool.name}: missing description`);
+      continue;
+    }
+    if (!tool.inputSchema) {
+      console.error(`❌ ${tool.name}: missing inputSchema`);
+      continue;
+    }
+    if (tool.inputSchema.type !== 'object') {
+      console.error(`❌ ${tool.name}: inputSchema.type must be 'object'`);
+      continue;
+    }
+    
+    console.log(`✅ ${tool.name}: valid schema`);
+  }
+}
+
+validateToolSchemas();
+```
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card title="Server Configuration" icon="server" href="/protocols/mcp/server-configuration">
+    Deploy MCP server
+  </Card>
+  <Card title="Troubleshooting" icon="wrench" href="/getting-started/troubleshooting">
+    Common issues
+  </Card>
+</CardGroup>

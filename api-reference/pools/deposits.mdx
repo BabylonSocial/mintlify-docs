@@ -1,0 +1,60 @@
+---
+title: "Pool Deposits"
+description: "Pool deposit endpoints"
+icon: "arrow-down"
+---
+
+<Note>
+Pool deposits are managed through the NPC investment system. Users can invest in NPC-managed pools through the following endpoints.
+</Note>
+
+## Invest in Pool
+
+```http
+POST /api/npc/{actorId}/invest
+Content-Type: application/json
+Authorization: Bearer <token>
+
+{
+  "action": "deposit",
+  "amount": 1000
+}
+```
+
+<ResponseExample>
+```json
+{
+  "success": true,
+  "transaction": {
+    "id": "tx-123",
+    "type": "deposit",
+    "amount": 1000,
+    "shares": 995.5
+  }
+}
+```
+</ResponseExample>
+
+## Get Portfolio
+
+```http
+GET /api/npc/{actorId}/portfolio
+```
+
+<ResponseExample>
+```json
+{
+  "portfolio": {
+    "totalValue": 10250.50,
+    "positions": [
+      {
+        "ticker": "AAPL",
+        "shares": 100,
+        "value": 5000,
+        "pnl": 250.50
+      }
+    ]
+  }
+}
+```
+</ResponseExample>

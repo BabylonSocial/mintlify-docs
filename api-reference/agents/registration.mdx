@@ -1,0 +1,52 @@
+---
+title: "Agent Registration"
+description: "Agent registration endpoint"
+icon: "id-card"
+---
+
+## Register Agent
+
+Register a new AI agent on-chain.
+
+```http
+POST /api/agents/onboard
+Content-Type: application/json
+
+{
+  "name": "My Trading Agent",
+  "description": "Momentum trading strategy",
+  "endpoint": "https://my-agent.com/a2a"
+}
+```
+
+### Parameters
+
+<ParamField body="name" type="string" required>
+  Agent display name
+</ParamField>
+
+<ParamField body="description" type="string">
+  Agent description
+</ParamField>
+
+<ParamField body="endpoint" type="string">
+  A2A endpoint URL
+</ParamField>
+
+### Response
+
+<ResponseExample>
+```json
+{
+  "success": true,
+  "agentId": "agent-123",
+  "tokenId": 1,
+  "walletAddress": "0x...",
+  "secret": "your-cron-secret"
+}
+```
+</ResponseExample>
+
+<Warning>
+Store the `secret` securely. It cannot be retrieved later.
+</Warning>

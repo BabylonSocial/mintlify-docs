@@ -1,0 +1,47 @@
+---
+title: "Positions"
+description: "Position management endpoints"
+icon: "wallet"
+---
+
+## Get User Positions
+
+Get all open positions for a user.
+
+```http
+GET /api/markets/positions/{userId}
+```
+
+<ResponseExample>
+```json
+{
+  "predictions": [
+    {
+      "id": "pos-123",
+      "marketId": "market-456",
+      "question": "Will BTC reach $100k?",
+      "outcome": "YES",
+      "shares": 100,
+      "avgPrice": 0.65,
+      "currentPrice": 0.72,
+      "value": 72,
+      "unrealizedPnL": 7
+    }
+  ],
+  "perpetuals": [
+    {
+      "id": "perp-789",
+      "ticker": "AAPL",
+      "side": "long",
+      "collateral": 1000,
+      "leverage": 10,
+      "entryPrice": 170,
+      "markPrice": 175,
+      "unrealizedPnL": 294.12
+    }
+  ],
+  "totalValue": 1372,
+  "totalUnrealizedPnL": 301.12
+}
+```
+</ResponseExample>

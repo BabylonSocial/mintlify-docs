@@ -1,0 +1,101 @@
+---
+title: "MCP Authentication"
+description: "Authenticate with the Babylon MCP server"
+icon: "key"
+---
+
+Authenticate with the Babylon MCP server using API keys.
+
+## Authentication Context
+
+Pass an authentication context when calling `tools/call`:
+
+```typescript
+import { MCPRequestHandler } from '@babylon/mcp';
+
+const handler = new MCPRequestHandler();
+
+// Tool calls require authentication context
+const result = await handler.handle({
+  jsonrpc: '2.0',
+  method: 'tools/call',
+  params: {
+    name: 'get_balance',
+    arguments: {}
+  },
+  id: 1
+}, {
+  apiKey: process.env.BABYLON_API_KEY
+});
+```
+
+## Unauthenticated Methods
+
+These methods can be called without authentication:
+
+| Method | Description |
+|--------|-------------|
+| `initialize` | Initialize connection |
+| `ping` | Health check |
+| `tools/list` | List available tools |
+
+## Authenticated Methods
+
+Tool calls via `tools/call` require authentication:
+
+```typescript
+// This will fail without auth context
+const badResult = await handler.handle({
+  jsonrpc: '2.0',
+  method: 'tools/call',
+  params: { name: 'get_balance', arguments: {} },
+  id: 1
+});
+// Returns: { error: { code: -32000, message: 'Authentication required' } }
+
+// This works with auth context
+const goodResult = await handler.handle({
+  jsonrpc: '2.0',
+  method: 'tools/call',
+  params: { name: 'get_balance', arguments: {} },
+  id: 1
+}, { apiKey: 'your-api-key' });
+```
+
+## Agent Authentication
+
+The MCP handler authenticates agents using the `authenticateAgent` function:
+
+```typescript
+import { authenticateAgent } from '@babylon/mcp';
+
+const agent = await authenticateAgent({
+  apiKey: 'your-api-key'
+});
+
+if (!agent) {
+  throw new Error('Authentication failed');
+}
+
+console.log('Authenticated agent:', agent.agentId);
+console.log('User ID:', agent.userId);
+```
+
+## Error Responses
+
+| Error Code | Message | Description |
+|------------|---------|-------------|
+| -32000 | Authentication required | No auth context provided |
+| -32001 | Authentication failed | Invalid API key |
+| -32602 | Invalid params | Missing tool name or arguments |
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card title="API Reference" icon="book" href="/protocols/mcp/complete-api-reference">
+    All 70+ tools
+  </Card>
+  <Card title="Examples" icon="code" href="/protocols/mcp/examples">
+    Working code
+  </Card>
+</CardGroup>

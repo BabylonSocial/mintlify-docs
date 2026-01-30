@@ -1,0 +1,64 @@
+---
+title: "Development Commands"
+description: "CLI commands for development workflows"
+icon: "code"
+---
+
+Commands for running and building Babylon during development.
+
+## Database Commands (babylon db)
+
+| Command | Description |
+|---------|-------------|
+| `babylon db start` | Start PostgreSQL container |
+| `babylon db stop` | Stop PostgreSQL container |
+| `babylon db restart` | Restart PostgreSQL container |
+| `babylon db status` | Show database status |
+| `babylon db migrate` | Run database migrations |
+| `babylon db seed` | Seed database with initial data |
+| `babylon db reset` | Reset database (drop + migrate) |
+
+## Game Commands (babylon game)
+
+| Command | Description |
+|---------|-------------|
+| `babylon game start` | Start the continuous game |
+| `babylon game pause` | Pause the continuous game |
+| `babylon game status` | Show game runtime status |
+| `babylon game generate` | Generate new game content |
+| `babylon game validate` | Validate actor data integrity |
+
+## Deploy Commands (babylon deploy)
+
+| Command | Description |
+|---------|-------------|
+| `babylon deploy local` | Deploy to local Hardhat node |
+| `babylon deploy testnet` | Deploy to Base Sepolia testnet |
+| `babylon deploy mainnet --force` | Deploy to Base mainnet |
+| `babylon deploy setup` | Post-deployment testnet setup |
+
+## Status Commands (babylon status)
+
+| Command | Description |
+|---------|-------------|
+| `babylon status` | Show all system status |
+| `babylon status game` | Game status only |
+| `babylon status wallet` | Wallet status only |
+| `babylon status agent0` | Agent0 registration status |
+| `babylon status llm` | LLM provider status |
+
+## Examples
+
+```bash
+# Start database and check status
+babylon db start
+babylon db status
+
+# Start the game
+babylon game start
+babylon game status
+
+# Deploy to testnet
+babylon deploy testnet
+babylon deploy setup
+```

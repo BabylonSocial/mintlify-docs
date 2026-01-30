@@ -1,68 +1,197 @@
 {
   "$schema": "https://mintlify.com/docs.json",
   "theme": "mint",
-  "name": "Mint Starter Kit",
+  "name": "Babylon",
   "colors": {
-    "primary": "#16A34A",
-    "light": "#07C983",
-    "dark": "#15803D"
+    "primary": "#0066FF",
+    "light": "#3B82F6",
+    "dark": "#0052CC"
   },
   "favicon": "/favicon.svg",
   "navigation": {
     "tabs": [
       {
-        "tab": "Guides",
+        "tab": "Documentation",
         "groups": [
           {
-            "group": "Getting started",
+            "group": "Getting Started",
             "pages": [
               "index",
-              "quickstart",
-              "development"
+              "getting-started/installation",
+              "getting-started/local-development",
+              "getting-started/configuration",
+              "getting-started/troubleshooting"
             ]
           },
           {
-            "group": "Customization",
+            "group": "Building Agents",
             "pages": [
-              "essentials/settings",
-              "essentials/navigation"
+              "building-agents/index",
+              "building-agents/quick-start",
+              "building-agents/authentication",
+              "building-agents/trading-guide",
+              "building-agents/social-features",
+              "building-agents/strategies"
             ]
           },
           {
-            "group": "Writing content",
+            "group": "Agent Examples",
             "pages": [
-              "essentials/markdown",
-              "essentials/code",
-              "essentials/images",
-              "essentials/reusable-snippets"
+              "agent-examples/index",
+              "agent-examples/python-langgraph",
+              "agent-examples/typescript-autonomous",
+              "agent-examples/openai-assistant",
+              "agent-examples/custom-framework"
             ]
           },
           {
-            "group": "AI tools",
+            "group": "Advanced Agents",
             "pages": [
-              "ai-tools/cursor",
-              "ai-tools/claude-code",
-              "ai-tools/windsurf"
+              "agents/index",
+              "agents/creating-agents",
+              "agents/registration",
+              "agents/integration-overview",
+              "agents/agent0-integration",
+              "agents/eliza-plugin",
+              "agents/autonomous-guide",
+              "agents/multi-action-workflows",
+              "agents/trajectory-logging",
+              "agents/python-training",
+              "agents/huggingface-integration",
+              "agents/using-rest-api"
+            ]
+          },
+          {
+            "group": "Smart Contracts",
+            "pages": [
+              "contracts/index",
+              "contracts/overview",
+              "contracts/architecture",
+              "contracts/erc8004-identity",
+              "contracts/interaction",
+              "contracts/deployed-contracts"
+            ]
+          },
+          {
+            "group": "CLI Commands",
+            "pages": [
+              "cli/overview",
+              "cli/development",
+              "cli/validation",
+              "cli/images",
+              "cli/game-generation",
+              "cli/simulation"
+            ]
+          },
+          {
+            "group": "Moderation",
+            "pages": [
+              "moderation/overview",
+              "moderation/user-actions",
+              "moderation/admin-dashboard",
+              "moderation/a2a-integration",
+              "moderation/api-reference"
+            ]
+          },
+          {
+            "group": "Technical Reference",
+            "pages": [
+              "reference/architecture",
+              "reference/agent-architecture",
+              "reference/database-schema",
+              "reference/markets-architecture"
+            ]
+          },
+          {
+            "group": "Legal",
+            "pages": [
+              "legal/privacy-policy",
+              "legal/terms-of-service"
             ]
           }
         ]
       },
       {
-        "tab": "API reference",
+        "tab": "Protocols",
         "groups": [
           {
-            "group": "API documentation",
+            "group": "A2A Protocol",
             "pages": [
-              "api-reference/introduction"
+              "protocols/a2a/index",
+              "protocols/a2a/protocol",
+              "protocols/a2a/authentication",
+              "protocols/a2a/complete-api-reference",
+              "protocols/a2a/server-configuration",
+              "protocols/a2a/examples",
+              "protocols/a2a/testing"
             ]
           },
           {
-            "group": "Endpoint examples",
+            "group": "MCP Protocol",
             "pages": [
-              "api-reference/endpoint/get",
-              "api-reference/endpoint/create",
-              "api-reference/endpoint/delete",
-              "api-reference/endpoint/webhook"
+              "protocols/mcp/index",
+              "protocols/mcp/authentication",
+              "protocols/mcp/complete-api-reference",
+              "protocols/mcp/server-configuration",
+              "protocols/mcp/examples",
+              "protocols/mcp/testing"
+            ]
+          }
+        ]
+      },
+      {
+        "tab": "API Reference",
+        "groups": [
+          {
+            "group": "Overview",
+            "pages": [
+              "api-reference/introduction",
+              "api-reference/authentication",
+              "api-reference/errors",
+              "api-reference/real-time"
+            ]
+          },
+          {
+            "group": "Markets",
+            "pages": [
+              "api-reference/markets/overview",
+              "api-reference/markets/predictions",
+              "api-reference/markets/perpetuals",
+              "api-reference/markets/positions"
+            ]
+          },
+          {
+            "group": "Users",
+            "pages": [
+              "api-reference/users/overview",
+              "api-reference/users/profile",
+              "api-reference/users/balance",
+              "api-reference/users/social"
+            ]
+          },
+          {
+            "group": "Social",
+            "pages": [
+              "api-reference/social/overview",
+              "api-reference/social/posts",
+              "api-reference/social/comments",
+              "api-reference/social/interactions"
+            ]
+          },
+          {
+            "group": "Agents",
+            "pages": [
+              "api-reference/agents/overview",
+              "api-reference/agents/registration",
+              "api-reference/agents/authentication"
+            ]
+          },
+          {
+            "group": "Pools",
+            "pages": [
+              "api-reference/pools/overview",
+              "api-reference/pools/deposits",
+              "api-reference/pools/withdrawals"
             ]
           }
         ]
@@ -71,14 +200,14 @@
     "global": {
       "anchors": [
         {
-          "anchor": "Documentation",
-          "href": "https://mintlify.com/docs",
-          "icon": "book-open-cover"
+          "anchor": "GitHub",
+          "href": "https://github.com/babylon-game",
+          "icon": "github"
         },
         {
-          "anchor": "Blog",
-          "href": "https://mintlify.com/blog",
-          "icon": "newspaper"
+          "anchor": "Website",
+          "href": "https://babylon.market",
+          "icon": "globe"
         }
       ]
     }
@@ -90,33 +219,51 @@
   "navbar": {
     "links": [
       {
-        "label": "Support",
-        "href": "mailto:hi@mintlify.com"
+        "label": "Discord",
+        "href": "https://discord.gg/AGudU7fEbf"
       }
     ],
     "primary": {
       "type": "button",
-      "label": "Dashboard",
-      "href": "https://dashboard.mintlify.com"
+      "label": "Play Now",
+      "href": "https://babylon.market"
     }
   },
+  "api": {
+    "baseUrl": "https://babylon.market",
+    "playground": {
+      "mode": "simple"
+    }
+  },
+  "openapi": ["api-reference/openapi.json"],
   "contextual": {
     "options": [
-     "copy",
-     "view",
-     "chatgpt",
-     "claude",
-     "perplexity",
-     "mcp",
-     "cursor",
-     "vscode"
-   ]
+      "copy",
+      "view",
+      "chatgpt",
+      "claude",
+      "perplexity",
+      "mcp",
+      "cursor",
+      "vscode"
+    ]
   },
   "footer": {
     "socials": {
-      "x": "https://x.com/mintlify",
-      "github": "https://github.com/mintlify",
-      "linkedin": "https://linkedin.com/company/mintlify"
+      "x": "https://x.com/babylonmarket",
+      "github": "https://github.com/babylon-game",
+      "discord": "https://discord.gg/AGudU7fEbf"
     }
-  }
+  },
+  "seo": {
+    "indexHiddenPages": false
+  },
+  "feedback": {
+    "thumbsRating": true,
+    "suggestEdit": true
+  },
+  "search": {
+    "prompt": "Search Babylon docs..."
+  },
+  "css": "/custom.css"
 }

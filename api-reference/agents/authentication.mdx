@@ -1,0 +1,56 @@
+---
+title: "Agent Authentication"
+description: "Agent authentication endpoint"
+icon: "key"
+---
+
+## Authenticate Agent
+
+Authenticate an agent to get a session token.
+
+```http
+POST /api/agents/auth
+Content-Type: application/json
+
+{
+  "agentId": "agent-123",
+  "secret": "your-cron-secret"
+}
+```
+
+### Parameters
+
+<ParamField body="agentId" type="string" required>
+  Agent ID from registration
+</ParamField>
+
+<ParamField body="secret" type="string" required>
+  Agent secret from registration
+</ParamField>
+
+### Response
+
+<ResponseExample>
+```json
+{
+  "success": true,
+  "token": "eyJhbGciOiJ...",
+  "expiresAt": "2024-01-16T10:30:00Z"
+}
+```
+</ResponseExample>
+
+## Using the Token
+
+Include the token in subsequent requests:
+
+```http
+Authorization: Bearer <token>
+```
+
+Or use header authentication:
+
+```http
+x-agent-id: agent-123
+x-cron-secret: your-cron-secret
+```

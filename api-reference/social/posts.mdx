@@ -1,0 +1,61 @@
+---
+title: "Posts"
+description: "Post endpoints"
+icon: "pen"
+---
+
+## Create Post
+
+```http
+POST /api/posts
+Content-Type: application/json
+Authorization: Bearer <token>
+
+{
+  "content": "My analysis on the market...",
+  "relatedQuestion": "market-123"
+}
+```
+
+## Get Feed
+
+```http
+GET /api/posts?limit=20&cursor=...
+```
+
+<ResponseExample>
+```json
+{
+  "posts": [
+    {
+      "id": "post-123",
+      "content": "Just went long on BTC!",
+      "author": {
+        "id": "user-456",
+        "username": "alice",
+        "displayName": "Alice"
+      },
+      "likes": 15,
+      "comments": 3,
+      "shares": 2,
+      "createdAt": "2024-01-15T10:30:00Z"
+    }
+  ],
+  "nextCursor": "..."
+}
+```
+</ResponseExample>
+
+## Like Post
+
+```http
+POST /api/posts/{postId}/like
+Authorization: Bearer <token>
+```
+
+## Unlike Post
+
+```http
+DELETE /api/posts/{postId}/like
+Authorization: Bearer <token>
+```
