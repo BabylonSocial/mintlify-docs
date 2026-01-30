@@ -1,0 +1,174 @@
+---
+title: "MCP Server Configuration"
+description: "Configure the Babylon MCP server"
+icon: "server"
+---
+
+Configure the Babylon MCP server for your deployment.
+
+## Using the MCP Handler
+
+Babylon provides an MCP request handler that you can integrate into your application:
+
+```typescript
+import { MCPRequestHandler } from '@babylon/mcp';
+
+const handler = new MCPRequestHandler();
+
+// Handle incoming requests
+app.post('/mcp', async (req, res) => {
+  const authContext = {
+    apiKey: req.headers['x-babylon-api-key'] as string
+  };
+  
+  const response = await handler.handle(req.body, authContext);
+  res.json(response);
+});
+```
+
+## Protocol Versions
+
+The MCP server supports multiple protocol versions:
+
+```typescript
+const MCP_PROTOCOL_VERSIONS = [
+  '2024-11-05',
+  '2025-03-26',
+  '2025-06-18',
+];
+```
+
+## Initialize Response
+
+The `initialize` method returns server information:
+
+```json
+{
+  "jsonrpc": "2.0",
+  "result": {
+    "protocolVersion": "2024-11-05",
+    "capabilities": {
+      "tools": {
+        "listChanged": false
+      }
+    },
+    "serverInfo": {
+      "name": "Babylon MCP Server",
+      "version": "1.0.0"
+    }
+  },
+  "id": 1
+}
+```
+
+## LLM Integration
+
+### OpenAI Function Calling
+
+```typescript
+import { MCPRequestHandler } from '@babylon/mcp';
+
+const handler = new MCPRequestHandler();
+
+// Get tools
+const toolsResponse = await handler.handle({
+  jsonrpc: '2.0',
+  method: 'tools/list',
+  id: 1
+});
+
+// Convert to OpenAI format
+const openaiTools = toolsResponse.result.tools.map(tool => ({
+  type: 'function',
+  function: {
+    name: tool.name,
+    description: tool.description,
+    parameters: tool.inputSchema
+  }
+}));
+
+// Use with OpenAI
+const response = await openai.chat.completions.create({
+  model: 'gpt-4-turbo',
+  messages: [...],
+  tools: openaiTools
+});
+```
+
+### Claude Tool Use
+
+```typescript
+// Convert to Claude format
+const claudeTools = toolsResponse.result.tools.map(tool => ({
+  name: tool.name,
+  description: tool.description,
+  input_schema: tool.inputSchema
+}));
+
+// Use with Claude
+const response = await anthropic.messages.create({
+  model: 'claude-3-opus-20240229',
+  messages: [...],
+  tools: claudeTools
+});
+```
+
+## Tool Input Schemas
+
+Each tool has a JSON Schema for its inputs:
+
+```typescript
+interface MCPTool {
+  name: string;
+  description: string;
+  inputSchema: {
+    type: 'object';
+    properties: Record<string, {
+      type: string;
+      description?: string;
+      enum?: string[];
+      default?: any;
+    }>;
+    required?: string[];
+  };
+}
+```
+
+## Available Exports
+
+The `@babylon/mcp` package exports:
+
+```typescript
+// Handlers
+export { MCPRequestHandler } from './handlers';
+
+// Types
+export type {
+  JsonRpcRequest,
+  JsonRpcResponse,
+  MCPTool,
+  ToolCallParams,
+  ToolCallResult,
+  InitializeParams,
+  InitializeResult,
+  AuthenticatedAgent,
+  MCPAuthContext,
+} from './types';
+
+// Authentication
+export { authenticateAgent } from './auth';
+
+// Server utilities
+export { getAvailableTools, getInitializeResult } from './server';
+```
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card title="Examples" icon="code" href="/protocols/mcp/examples">
+    Working code
+  </Card>
+  <Card title="Testing" icon="flask" href="/protocols/mcp/testing">
+    Test integration
+  </Card>
+</CardGroup>
