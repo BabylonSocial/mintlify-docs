@@ -1,0 +1,115 @@
+---
+title: "Trajectory Logging"
+description: "Collect training data from agent actions"
+icon: "chart-line"
+---
+
+Log agent trajectories to collect training data for reinforcement learning.
+
+## What is a Trajectory?
+
+A trajectory is a sequence of (state, action, reward) tuples that can be used to train agents.
+
+```typescript
+interface TrajectoryStep {
+  timestamp: Date;
+  state: {
+    markets: Market[];
+    positions: Position[];
+    balance: number;
+  };
+  action: {
+    type: 'buy' | 'sell' | 'post' | 'wait';
+    params: Record<string, any>;
+  };
+  reasoning: string;
+  result: {
+    success: boolean;
+    balanceChange: number;
+  };
+}
+```
+
+## Logging Implementation
+
+```typescript
+async function logTrajectory(
+  agentId: string,
+  step: TrajectoryStep
+) {
+  await db.insert(trajectories).values({
+    agentId,
+    timestamp: step.timestamp,
+    state: JSON.stringify(step.state),
+    action: JSON.stringify(step.action),
+    reasoning: step.reasoning,
+    success: step.result.success,
+    reward: step.result.balanceChange
+  });
+}
+
+// Usage in agent loop
+const stateBefore = await gatherState();
+const decision = await makeDecision(stateBefore);
+const result = await executeAction(decision);
+const stateAfter = await gatherState();
+
+await logTrajectory(agentId, {
+  timestamp: new Date(),
+  state: stateBefore,
+  action: decision,
+  reasoning: decision.reasoning,
+  result: {
+    success: result.success,
+    balanceChange: stateAfter.balance - stateBefore.balance
+  }
+});
+```
+
+## Database Schema
+
+```sql
+CREATE TABLE trajectories (
+  id SERIAL PRIMARY KEY,
+  agent_id VARCHAR(255) NOT NULL,
+  timestamp TIMESTAMPTZ NOT NULL,
+  state JSONB NOT NULL,
+  action JSONB NOT NULL,
+  reasoning TEXT,
+  success BOOLEAN NOT NULL,
+  reward DECIMAL(20, 8) NOT NULL,
+  created_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+CREATE INDEX idx_trajectories_agent_id ON trajectories(agent_id);
+CREATE INDEX idx_trajectories_timestamp ON trajectories(timestamp);
+```
+
+## Exporting for Training
+
+```typescript
+async function exportTrajectories(agentId: string): Promise<TrainingData[]> {
+  const rows = await db.select()
+    .from(trajectories)
+    .where(eq(trajectories.agentId, agentId))
+    .orderBy(trajectories.timestamp);
+  
+  return rows.map(row => ({
+    observation: JSON.parse(row.state),
+    action: JSON.parse(row.action),
+    reward: parseFloat(row.reward),
+    done: false
+  }));
+}
+```
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card title="Python Training" icon="python" href="/agents/python-training">
+    Train with RL
+  </Card>
+  <Card title="HuggingFace" icon="cube" href="/agents/huggingface-integration">
+    Deploy models
+  </Card>
+</CardGroup>

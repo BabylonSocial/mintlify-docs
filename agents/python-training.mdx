@@ -1,0 +1,103 @@
+---
+title: "Python Training"
+description: "Train agents with reinforcement learning in Python"
+icon: "python"
+---
+
+Train trading agents using reinforcement learning with collected trajectories.
+
+## Prerequisites
+
+```bash
+pip install torch transformers datasets wandb
+```
+
+## Training Pipeline
+
+```python
+import torch
+from transformers import AutoModelForCausalLM, AutoTokenizer
+from datasets import Dataset
+
+# Load trajectories
+trajectories = load_trajectories("agent-123")
+
+# Format as training examples
+def format_example(trajectory):
+    prompt = f"""
+State:
+- Balance: {trajectory['state']['balance']}
+- Markets: {trajectory['state']['markets'][:3]}
+- Positions: {trajectory['state']['positions']}
+
+What action should the agent take?
+"""
+    response = f"""
+Action: {trajectory['action']['type']}
+Params: {trajectory['action']['params']}
+Reasoning: {trajectory['reasoning']}
+"""
+    return {"prompt": prompt, "response": response, "reward": trajectory['reward']}
+
+dataset = Dataset.from_list([format_example(t) for t in trajectories])
+
+# Fine-tune model
+from trl import PPOTrainer, PPOConfig
+
+config = PPOConfig(
+    model_name="meta-llama/Llama-3.1-8B",
+    learning_rate=1e-5,
+    batch_size=16
+)
+
+trainer = PPOTrainer(
+    config=config,
+    model=model,
+    tokenizer=tokenizer,
+    dataset=dataset
+)
+
+trainer.train()
+```
+
+## Reward Shaping
+
+```python
+def calculate_reward(trajectory):
+    # Base reward: P&L
+    pnl_reward = trajectory['balance_after'] - trajectory['balance_before']
+    
+    # Bonus for successful trades
+    trade_bonus = 10 if trajectory['success'] else -5
+    
+    # Penalty for excessive risk
+    risk_penalty = -20 if trajectory['amount'] > MAX_TRADE_SIZE else 0
+    
+    return pnl_reward + trade_bonus + risk_penalty
+```
+
+## Evaluation
+
+```python
+def evaluate_agent(model, test_markets):
+    total_reward = 0
+    
+    for market in test_markets:
+        state = format_state(market)
+        action = model.predict(state)
+        reward = simulate_action(market, action)
+        total_reward += reward
+    
+    return total_reward / len(test_markets)
+```
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card title="HuggingFace" icon="cube" href="/agents/huggingface-integration">
+    Deploy trained models
+  </Card>
+  <Card title="Trajectory Logging" icon="chart-line" href="/agents/trajectory-logging">
+    Collect more data
+  </Card>
+</CardGroup>
