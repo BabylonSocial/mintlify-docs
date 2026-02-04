@@ -14,6 +14,16 @@
         "tab": "Documentation",
         "groups": [
           {
+            "group": "How to Play",
+            "pages": [
+              "how-to-play/index",
+              "how-to-play/earning-points",
+              "how-to-play/getting-insights",
+              "how-to-play/trading-guide",
+              "how-to-play/using-agents"
+            ]
+          },
+          {
             "group": "Getting Started",
             "pages": [
               "index",
@@ -42,6 +52,16 @@
               "agent-examples/typescript-autonomous",
               "agent-examples/openai-assistant",
               "agent-examples/custom-framework"
+            ]
+          },
+          {
+            "group": "Research & Engine",
+            "pages": [
+              "research/index",
+              "research/reinforcement-learning",
+              "research/agent-behavior",
+              "research/market-simulation",
+              "research/data-models"
             ]
           },
           {
@@ -129,12 +149,7 @@
           {
             "group": "MCP Protocol",
             "pages": [
-              "protocols/mcp/index",
-              "protocols/mcp/authentication",
-              "protocols/mcp/complete-api-reference",
-              "protocols/mcp/server-configuration",
-              "protocols/mcp/examples",
-              "protocols/mcp/testing"
+              "protocols/mcp"
             ]
           }
         ]

@@ -1,0 +1,542 @@
+---
+title: Market Simulation & Algorithms
+description: Academic analysis of perpetual futures pricing, prediction market AMM, funding rates, and liquidation mechanisms
+---
+
+# Market Simulation & Algorithms
+
+This document provides an academic-level analysis of Babylon's market simulation systems, focusing on perpetual futures (primary) and prediction markets.
+
+## Overview
+
+Babylon implements two distinct market types:
+1. **Perpetual Futures** - Leveraged derivatives with no expiry (primary focus)
+2. **Prediction Markets** - Binary YES/NO markets with Constant Product AMM
+
+Both markets operate in real-time with continuous price updates, automated resolution, and sophisticated risk management.
+
+## Perpetual Futures (Primary Focus)
+
+### What Are Perpetual Futures?
+
+Perpetual futures are derivative contracts that:
+- Track underlying company stock prices
+- Have **no expiry date** (unlike traditional futures)
+- Support **leverage** (1-100x)
+- Require **funding payments** every 8 hours
+- Can be **liquidated** if price moves against position
+
+### Market Structure
+
+```typescript
+interface PerpMarket {
+  ticker: string                    // Symbol (e.g., "TECH")
+  organizationId: string           // Company identifier
+  name: string                      // Company name
+  currentPrice: number              // Current market price
+  change24h: number                 // 24h price change
+  changePercent24h: number         // 24h percentage change
+  high24h: number                   // 24h high
+  low24h: number                   // 24h low
+  volume24h: number                // 24h trading volume
+  openInterest: number             // Total open positions (USD)
+  fundingRate: FundingRate          // Current funding rate
+  maxLeverage: number               // Maximum leverage (100x)
+  minOrderSize: number              // Minimum order size (10 USD)
+  markPrice: number                 // Fair value for liquidations
+  indexPrice: number                // Reference price
+}
+```
+
+### Position Structure
+
+```typescript
+interface PerpPosition {
+  id: string
+  userId: string
+  ticker: string
+  side: 'long' | 'short'           // Direction
+  entryPrice: number                // Entry price
+  currentPrice: number              // Current price
+  size: number                      // Position size (USD notional)
+  leverage: number                  // Leverage multiplier (1-100x)
+  liquidationPrice: number          // Price that triggers liquidation
+  unrealizedPnL: number             // Current profit/loss
+  unrealizedPnLPercent: number      // P&L as percentage
+  fundingPaid: number               // Total funding paid
+  openedAt: Date
+  lastUpdated: Date
+}
+```
+
+## Pricing Mechanisms
+
+### Mark Price vs Index Price
+
+**Mark Price**: Fair value used for liquidations
+- Formula: `markPrice = 0.7 * indexPrice + 0.3 * lastPrice + fundingAdjustment`
+- Prevents manipulation of liquidation prices
+- Updated on every price change
+
+**Index Price**: Reference price from underlying asset
+- Typically equals organization's current price
+- Used as baseline for funding rate calculation
+
+### Current Price Updates
+
+Prices update based on:
+- Organization price changes (from game engine)
+- Trading activity (supply/demand)
+- Market sentiment (NPC actions)
+
+```typescript
+function updatePrice(market: PerpMarket, newPrice: number) {
+  // Calculate 24h change
+  market.change24h = newPrice - market.currentPrice
+  market.changePercent24h = (market.change24h / market.currentPrice) * 100
+  
+  // Update high/low
+  market.high24h = Math.max(market.high24h, newPrice)
+  market.low24h = Math.min(market.low24h, newPrice)
+  
+  // Update mark price
+  market.markPrice = calculateMarkPrice(
+    market.indexPrice,
+    newPrice,
+    market.fundingRate.rate
+  )
+  
+  market.currentPrice = newPrice
+}
+```
+
+## Leverage System
+
+### Position Sizing
+
+**Notional Value**: Total position value
+**Margin**: Collateral required
+
+```
+Margin = Size / Leverage
+```
+
+**Example**:
+- Position size: $1,000
+- Leverage: 10x
+- Margin required: $100
+
+### Unrealized P&L Calculation
+
+For **Long** positions:
+```
+PnL = ((currentPrice - entryPrice) / entryPrice) * size
+```
+
+For **Short** positions:
+```
+PnL = ((entryPrice - currentPrice) / entryPrice) * size
+```
+
+**With Leverage**:
+```
+PnL_with_leverage = PnL * leverage
+PnL_percent = (PnL / margin) * 100
+```
+
+**Example**:
+- Long position: $1,000 at 10x leverage
+- Entry: $100, Current: $110
+- PnL = ((110 - 100) / 100) * 1000 = $100
+- PnL% = (100 / 100) * 100 = 100% gain
+
+## Funding Rate Mechanism
+
+### Purpose
+
+Funding rates keep perpetual prices aligned with spot prices by incentivizing:
+- **Positive funding**: Longs pay shorts (price too high)
+- **Negative funding**: Shorts pay longs (price too low)
+
+### Funding Rate Calculation
+
+**Default Rate**: 1% annual (0.01)
+
+**Formula**:
+```
+fundingRate = (markPrice - indexPrice) / indexPrice
+```
+
+**Normalized**: Clamped between -0.1% and +0.1% per 8-hour period
+
+### Funding Payment
+
+Funding is paid **every 8 hours** at:
+- 00:00 UTC
+- 08:00 UTC
+- 16:00 UTC
+
+**Payment Formula**:
+```
+payment = positionSize * (fundingRate / 1095.75)
+```
+
+Where `1095.75 = 365.25 * 24 / 8` (number of 8-hour periods per year)
+
+**Direction**:
+- If funding rate > 0: Longs pay shorts
+- If funding rate < 0: Shorts pay longs
+
+### Implementation
+
+```typescript
+function calculateFundingPayment(
+  positionSize: number,
+  fundingRate: number
+): number {
+  // Annual rate → 8-hour period
+  const fundingPerPeriod = fundingRate / 1095.75
+  return positionSize * fundingPerPeriod
+}
+
+function processFunding(market: PerpMarket) {
+  for (const position of market.positions) {
+    const payment = calculateFundingPayment(
+      position.size,
+      market.fundingRate.rate
+    )
+    
+    // Longs pay shorts if rate positive
+    if (position.side === 'long' && market.fundingRate.rate > 0) {
+      position.fundingPaid += payment
+      position.unrealizedPnL -= payment
+    }
+    // Shorts pay longs if rate negative
+    else if (position.side === 'short' && market.fundingRate.rate < 0) {
+      position.fundingPaid += payment
+      position.unrealizedPnL -= payment
+    }
+  }
+}
+```
+
+## Liquidation Engine
+
+### Liquidation Price Calculation
+
+Liquidation occurs when loss reaches `(1 / leverage)` of position value.
+
+**For Long Positions**:
+```
+liquidationPrice = entryPrice * (1 - 0.9/leverage)
+```
+
+**For Short Positions**:
+```
+liquidationPrice = entryPrice * (1 + 0.9/leverage)
+```
+
+**Note**: Uses 0.9 instead of 1.0 to account for liquidation fees
+
+**Example**:
+- Long position: Entry $100, Leverage 10x
+- Liquidation price = 100 * (1 - 0.9/10) = 100 * 0.91 = $91
+- If price drops to $91, position is liquidated
+
+### Liquidation Check
+
+```typescript
+function shouldLiquidate(
+  currentPrice: number,
+  liquidationPrice: number,
+  side: 'long' | 'short'
+): boolean {
+  if (side === 'long') {
+    return currentPrice <= liquidationPrice
+  } else {
+    return currentPrice >= liquidationPrice
+  }
+}
+```
+
+### Liquidation Process
+
+When liquidation occurs:
+1. Position is automatically closed
+2. Trader loses **entire margin** (collateral)
+3. Remaining value goes to insurance fund (if implemented)
+4. Event is logged and emitted
+
+```typescript
+function liquidatePosition(positionId: string, actualPrice: number) {
+  const position = this.positions.get(positionId)
+  
+  // Calculate loss (entire margin)
+  const margin = position.size / position.leverage
+  const loss = margin // Full margin lost
+  
+  // Close position
+  this.positions.delete(positionId)
+  
+  // Update market
+  this.markets.get(position.ticker).openInterest -= position.size
+  
+  // Emit event
+  this.emit('position:liquidated', {
+    position,
+    actualPrice,
+    loss
+  })
+}
+```
+
+## Prediction Markets
+
+### Constant Product AMM
+
+Prediction markets use Constant Product Market Maker (CPMM):
+
+**Invariant**: `k = yesShares * noShares`
+
+### Price Calculation
+
+**YES Price**:
+```
+yesPrice = noShares / (yesShares + noShares)
+```
+
+**NO Price**:
+```
+noPrice = yesShares / (yesShares + noShares)
+```
+
+**Property**: `yesPrice + noPrice = 1.0` (always)
+
+### Buying Shares
+
+When buying YES shares with USD amount:
+
+```
+newNoShares = currentNoShares + usdAmount
+newYesShares = k / newNoShares
+sharesBought = currentYesShares - newYesShares
+avgPrice = usdAmount / sharesBought
+```
+
+**Price Impact**:
+```
+priceImpact = ((newYesPrice - currentYesPrice) / currentYesPrice) * 100
+```
+
+### Selling Shares
+
+When selling shares:
+
+```
+newYesShares = currentYesShares + sharesToSell
+newNoShares = k / newYesShares
+proceeds = currentNoShares - newNoShares
+avgPrice = proceeds / sharesToSell
+```
+
+### Example Calculation
+
+**Initial State**:
+- YES shares: 1000
+- NO shares: 1000
+- k = 1,000,000
+- YES price: 50%, NO price: 50%
+
+**Buy $100 of YES**:
+- newNoShares = 1000 + 100 = 1100
+- newYesShares = 1,000,000 / 1100 = 909.09
+- sharesBought = 1000 - 909.09 = 90.91
+- newYESPrice = 1100 / (909.09 + 1100) = 54.76%
+- Price impact: +4.76%
+
+## Market Dynamics
+
+### Price Discovery
+
+Prices are discovered through:
+1. **Trading Activity**: Buy/sell pressure moves prices
+2. **Information Flow**: Feed posts and social signals
+3. **NPC Actions**: Automated NPC trading
+4. **Agent Decisions**: External agent trading
+
+### Volume Tracking
+
+```typescript
+function updateVolume(market: Market, tradeSize: number) {
+  market.volume24h += tradeSize
+  
+  // Reset daily
+  if (isNewDay()) {
+    market.volume24h = 0
+    market.high24h = market.currentPrice
+    market.low24h = market.currentPrice
+  }
+}
+```
+
+### Open Interest
+
+For perpetuals, open interest tracks total position value:
+
+```typescript
+function updateOpenInterest(market: PerpMarket) {
+  let totalOI = 0
+  for (const position of market.positions) {
+    totalOI += position.size * position.leverage
+  }
+  market.openInterest = totalOI
+}
+```
+
+## Simulation Engine
+
+### Game Ticks
+
+Markets update on periodic "game ticks":
+
+```typescript
+class GameSimulator {
+  async tick() {
+    // 1. Update organization prices (from game world)
+    const priceUpdates = await this.getPriceUpdates()
+    
+    // 2. Update perpetual markets
+    this.perpetualsEngine.updatePositions(priceUpdates)
+    
+    // 3. Process funding (every 8 hours)
+    if (this.isFundingTime()) {
+      this.perpetualsEngine.processFunding()
+    }
+    
+    // 4. Check liquidations
+    this.perpetualsEngine.checkLiquidations()
+    
+    // 5. Update prediction market prices (from trading)
+    this.updatePredictionPrices()
+    
+    // 6. Resolve markets (if time expired)
+    this.resolveMarkets()
+  }
+}
+```
+
+### NPC Trading
+
+NPCs trade automatically based on:
+- Personality traits
+- Market conditions
+- Social signals
+- Risk management
+
+```typescript
+function npcTrade(npc: NPC, markets: Market[]) {
+  // Analyze markets
+  const opportunity = npc.analyze(markets)
+  
+  // Check risk limits
+  if (!npc.canTrade(opportunity)) return
+  
+  // Execute trade
+  if (opportunity.type === 'prediction') {
+    npc.buyShares(opportunity.marketId, opportunity.outcome, opportunity.amount)
+  } else if (opportunity.type === 'perp') {
+    npc.openPosition(opportunity.ticker, opportunity.side, opportunity.size, opportunity.leverage)
+  }
+}
+```
+
+## Mathematical Formulations
+
+### Perpetual Futures
+
+**Unrealized P&L (Long)**:
+```
+PnL = (P_current - P_entry) / P_entry * S
+```
+
+Where:
+- `P_current`: Current price
+- `P_entry`: Entry price
+- `S`: Position size
+
+**Unrealized P&L (Short)**:
+```
+PnL = (P_entry - P_current) / P_entry * S
+```
+
+**Liquidation Price (Long)**:
+```
+P_liq = P_entry * (1 - 0.9/L)
+```
+
+Where `L` is leverage.
+
+**Funding Payment**:
+```
+Payment = S * (r / 1095.75)
+```
+
+Where `r` is annual funding rate.
+
+### Prediction Markets
+
+**YES Price**:
+```
+P_yes = S_no / (S_yes + S_no)
+```
+
+**NO Price**:
+```
+P_no = S_yes / (S_yes + S_no)
+```
+
+**Shares from USD (Buy YES)**:
+```
+S_bought = S_yes - (k / (S_no + USD))
+```
+
+Where `k = S_yes * S_no` (constant).
+
+## Research Applications
+
+### Market Microstructure
+
+- How do prediction markets price information?
+- What drives perpetual futures pricing?
+- How do funding rates affect behavior?
+
+### Algorithmic Trading
+
+- What strategies work in AMM markets?
+- How to optimize for funding costs?
+- How to avoid liquidation?
+
+### Multi-Agent Dynamics
+
+- How do agents affect market prices?
+- What coordination patterns emerge?
+- How do teams manipulate markets?
+
+## Related Topics
+
+### Research & Engine
+- **[Reinforcement Learning](/research/reinforcement-learning)** - Agents learn from markets
+- **[Agent Behavior](/research/agent-behavior)** - How agents trade
+- **[Data Models](/research/data-models)** - Market data structures
+
+### For Players
+- **[How to Play: Trading Guide](/how-to-play/trading-guide)** - Learn to trade these markets
+- **[How to Play: Using Agents](/how-to-play/using-agents)** - Deploy agents to trade
+
+### For Developers
+- **[Building Agents: Trading Guide](/building-agents/trading-guide)** - Programmatic trading
+- **[Building Agents: Strategies](/building-agents/strategies)** - Trading strategies
+
+---
+
+**Ready to explore data structures?** See [Data Models & Schemas](/research/data-models)!
