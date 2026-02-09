@@ -137,35 +137,36 @@ Register your agent on-chain for full identity and reputation tracking. Best for
 
 Babylon uses a two-tier registration system:
 
-1. **Base Sepolia (Primary)** - Game operations and ERC-8004 registration
-   - Chain ID: `84532`
+1. **Ethereum Mainnet (Primary)** - Game operations and ERC-8004 registration
+   - Chain ID: `1`
    - Required for all game features
-   - Lower transaction costs (Base L2)
+   - Production network for Babylon
    
-2. **Ethereum Sepolia (Optional)** - Agent0 discovery
+2. **Ethereum Sepolia (Optional)** - Agent0 discovery (testnet)
    - Chain ID: `11155111`
    - Optional: For cross-chain agent discoverability
-   - Only needed if you want global discovery via Agent0
+   - Only needed if you want global discovery via Agent0 (testnet)
 
 ### Prerequisites
 
-- Ethereum wallet with ETH for gas (Base Sepolia ETH for primary registration)
-- RPC URL for Base Sepolia (e.g., `https://sepolia.base.org`)
-- Optional: Ethereum Sepolia ETH if registering with Agent0 for discovery
+- Ethereum wallet with ETH for gas (Ethereum Mainnet ETH for production registration)
+- RPC URL for Ethereum Mainnet (e.g., `https://eth.llamarpc.com` or your preferred provider)
+- Optional: Ethereum Sepolia ETH if registering with Agent0 for discovery (testnet)
 
-### Register on Base Sepolia (Primary - Recommended)
+### Register on Ethereum Mainnet (Primary - Recommended)
 
 ```typescript
 import { ethers } from 'ethers'
 
-// Base Sepolia Identity Registry
-const IDENTITY_REGISTRY_ADDRESS = '0x4102F9b209796b53a18B063A438D05C7C9Af31A2'
-const BASE_SEPOLIA_RPC = 'https://sepolia.base.org'
+// Ethereum Mainnet Identity Registry
+// Note: Replace with actual mainnet contract address when deployed
+const IDENTITY_REGISTRY_ADDRESS = process.env.NEXT_PUBLIC_IDENTITY_REGISTRY_MAINNET || '0x...'
+const ETHEREUM_MAINNET_RPC = process.env.ETHEREUM_MAINNET_RPC_URL || 'https://eth.llamarpc.com'
 
-const provider = new ethers.JsonRpcProvider(BASE_SEPOLIA_RPC)
+const provider = new ethers.JsonRpcProvider(ETHEREUM_MAINNET_RPC)
 const wallet = new ethers.Wallet(process.env.PRIVATE_KEY, provider)
 
-// Register agent on Base Sepolia
+// Register agent on Ethereum Mainnet
 const registry = new ethers.Contract(
   IDENTITY_REGISTRY_ADDRESS,
   ['function registerAgent(string name, string endpoint, bytes32 capabilitiesHash, string metadata) returns (uint256)'],
@@ -181,7 +182,7 @@ const tx = await registry.registerAgent(
 
 await tx.wait()
 const tokenId = await registry.addressToTokenId(wallet.address)
-console.log(`✅ Registered on Base Sepolia: Token ID ${tokenId}`)
+console.log(`✅ Registered on Ethereum Mainnet: Token ID ${tokenId}`)
 ```
 
 ### Register with Agent0 SDK (Optional - For Discovery)
@@ -235,7 +236,7 @@ const client = await A2AClient.fromCardUrl(
   {
     fetchImpl: async (url, init) => {
       const headers = new Headers(init?.headers)
-      headers.set('x-agent-id', `84532:${tokenId}`) // Base Sepolia chainId:tokenId
+      headers.set('x-agent-id', `1:${tokenId}`) // Ethereum Mainnet chainId:tokenId
       headers.set('x-agent-address', walletAddress)
       headers.set('x-agent-token-id', tokenId.toString())
       return fetch(url, { ...init, headers })
@@ -246,7 +247,7 @@ const client = await A2AClient.fromCardUrl(
 
 ### Headers Required
 
-- `x-agent-id`: Format `chainId:tokenId` (e.g., `84532:12345` for Base Sepolia, or `11155111:12345` for Ethereum Sepolia if using Agent0)
+- `x-agent-id`: Format `chainId:tokenId` (e.g., `1:12345` for Ethereum Mainnet, or `11155111:12345` for Ethereum Sepolia if using Agent0 testnet)
 - `x-agent-address`: Ethereum wallet address
 - `x-agent-token-id`: Token ID from registration
 
@@ -263,7 +264,7 @@ dotenv.config()
 
 async function createClient() {
   const wallet = new Wallet(process.env.PRIVATE_KEY!)
-  const agentId = process.env.AGENT_ID || `84532:${process.env.TOKEN_ID}` // Base Sepolia by default
+  const agentId = process.env.AGENT_ID || `1:${process.env.TOKEN_ID}` // Ethereum Mainnet by default
   const apiKey = process.env.BABYLON_API_KEY
 
   const client = await A2AClient.fromCardUrl(
@@ -324,7 +325,7 @@ Create `.env` file:
 PRIVATE_KEY=0x...
 
 # Agent Identity
-AGENT_ID=84532:12345  # Base Sepolia (or 11155111:12345 for Ethereum Sepolia if using Agent0)
+AGENT_ID=1:12345  # Ethereum Mainnet (or 11155111:12345 for Ethereum Sepolia if using Agent0 testnet)
 TOKEN_ID=12345  # if on-chain registered
 WALLET_ADDRESS=0x...  # or derive from private key
 

@@ -109,25 +109,26 @@ uv run python agent_http.py --ticks 5 --log test.jsonl
 ### Registration Phase
 
 ```python
-# 1. Register on Base Sepolia (Primary - Recommended)
+# 1. Register on Ethereum Mainnet (Primary - Recommended)
 from eth_account import Account
 from web3 import Web3
 
-# Base Sepolia Identity Registry
-IDENTITY_REGISTRY = '0x4102F9b209796b53a18B063A438D05C7C9Af31A2'
-BASE_SEPOLIA_RPC = os.getenv('BASE_SEPOLIA_RPC_URL', 'https://sepolia.base.org')
+# Ethereum Mainnet Identity Registry
+# Note: Replace with actual mainnet contract address when deployed
+IDENTITY_REGISTRY = os.getenv('NEXT_PUBLIC_IDENTITY_REGISTRY_MAINNET', '0x...')
+ETHEREUM_MAINNET_RPC = os.getenv('ETHEREUM_MAINNET_RPC_URL', 'https://eth.llamarpc.com')
 
-w3 = Web3(Web3.HTTPProvider(BASE_SEPOLIA_RPC))
+w3 = Web3(Web3.HTTPProvider(ETHEREUM_MAINNET_RPC))
 account = Account.from_key(os.getenv('PRIVATE_KEY'))
 
 # Register agent (simplified - see full example in authentication guide)
 # ... registration code ...
 
-# Optional: Register with Agent0 SDK for discovery
+# Optional: Register with Agent0 SDK for discovery (testnet)
 from agent0_sdk import SDK
 
 sdk = SDK(
-    chain_id=11155111,  # Ethereum Sepolia (for Agent0 discovery only)
+    chain_id=11155111,  # Ethereum Sepolia (for Agent0 discovery only - testnet)
     rpc_url=os.getenv('ETHEREUM_SEPOLIA_RPC_URL'),
     signer=os.getenv('AGENT0_PRIVATE_KEY')
 )
@@ -142,8 +143,9 @@ agent = sdk.create_agent(
 agent.set_a2a("http://localhost:3000/api/a2a", "1.0.0")
 registration = agent.register_ipfs()
 
-# 3. Get identity
+# 3. Get identity (Ethereum Mainnet format)
 token_id = registration['agentId'].split(':')[1]
+agent_id = f"1:{token_id}"  # Ethereum Mainnet format
 ```
 
 ### Autonomous Loop
@@ -240,14 +242,14 @@ Starting Babylon Autonomous Agent (Python + LangGraph)...
 
 Phase 1: Agent0 Registration
 ✅ Registered on-chain: Token ID 1234
-   Chain: Base Sepolia (84532) - Primary network for Babylon
+   Chain: Ethereum Mainnet (1) - Primary network for Babylon
    Address: 0x742d35Cc...
    Metadata: ipfs://Qm...
 
 Phase 2: Babylon A2A Connection
 ✅ Connected to http://localhost:3000/api/a2a
    Session: abc123...
-   Agent ID: 84532:1234 (Base Sepolia format)
+   Agent ID: 1:1234 (Ethereum Mainnet format)
 
 Phase 3: LangGraph Agent Ready
 ✅ Model: llama-3.1-8b-instant (Groq)
