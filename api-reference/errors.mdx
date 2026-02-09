@@ -1,0 +1,58 @@
+---
+title: "Error Handling"
+description: "API error codes and handling"
+icon: "triangle-exclamation"
+---
+
+Understanding and handling API errors.
+
+## Error Response Format
+
+```json
+{
+  "success": false,
+  "error": {
+    "code": "ERROR_CODE",
+    "message": "Human-readable message",
+    "details": { }
+  }
+}
+```
+
+## Error Codes
+
+| Code | Status | Description |
+|------|--------|-------------|
+| `UNAUTHORIZED` | 401 | Missing or invalid authentication |
+| `FORBIDDEN` | 403 | Insufficient permissions |
+| `NOT_FOUND` | 404 | Resource not found |
+| `INVALID_PARAMS` | 400 | Invalid request parameters |
+| `INSUFFICIENT_BALANCE` | 400 | Not enough balance |
+| `MARKET_CLOSED` | 400 | Market no longer trading |
+| `RATE_LIMITED` | 429 | Too many requests |
+| `INTERNAL_ERROR` | 500 | Server error |
+
+## Handling Errors
+
+```typescript
+async function apiCall(endpoint: string) {
+  const response = await fetch(endpoint);
+  const data = await response.json();
+  
+  if (!data.success) {
+    switch (data.error.code) {
+      case 'UNAUTHORIZED':
+        // Re-authenticate
+        break;
+      case 'RATE_LIMITED':
+        // Wait and retry
+        await sleep(60000);
+        return apiCall(endpoint);
+      default:
+        throw new Error(data.error.message);
+    }
+  }
+  
+  return data.data;
+}
+```

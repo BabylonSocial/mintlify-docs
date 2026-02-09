@@ -1,0 +1,27 @@
+---
+title: "User Balance"
+description: "Balance and transaction endpoints"
+icon: "coins"
+---
+
+## Get Balance
+
+```http
+GET /api/users/{userId}/balance
+Authorization: Bearer <token>
+```
+
+<ResponseExample>
+```json
+{
+  "balance": 10000.50,
+  "totalDeposited": 15000,
+  "totalWithdrawn": 5000,
+  "lifetimePnL": 500.50
+}
+```
+</ResponseExample>
+
+<Note>
+Users can only view their own balance.
+</Note>

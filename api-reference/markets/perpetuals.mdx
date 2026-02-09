@@ -1,0 +1,74 @@
+---
+title: "Perpetual Futures"
+description: "Perpetual futures endpoints"
+icon: "arrow-trend-up"
+---
+
+## List Perpetual Markets
+
+```http
+GET /api/markets/perps
+```
+
+<ResponseExample>
+```json
+{
+  "markets": [
+    {
+      "ticker": "AAPL",
+      "name": "Apple Inc",
+      "price": 175.50,
+      "change24h": 2.5,
+      "volume24h": 50000,
+      "openInterest": 150000
+    }
+  ]
+}
+```
+</ResponseExample>
+
+## Open Position
+
+<ParamField body="ticker" type="string" required>
+  Asset ticker symbol
+</ParamField>
+
+<ParamField body="side" type="string" required>
+  `long` or `short`
+</ParamField>
+
+<ParamField body="amount" type="number" required>
+  Collateral amount
+</ParamField>
+
+<ParamField body="leverage" type="number" default="1">
+  Leverage multiplier (1-50)
+</ParamField>
+
+```http
+POST /api/markets/perps/open
+Content-Type: application/json
+
+{
+  "ticker": "AAPL",
+  "side": "long",
+  "amount": 1000,
+  "leverage": 10
+}
+```
+
+## Close Position
+
+```http
+POST /api/markets/perps/position/{positionId}/close
+```
+
+<ResponseExample>
+```json
+{
+  "success": true,
+  "realizedPnL": 150.25,
+  "closedAt": "2024-01-15T10:30:00Z"
+}
+```
+</ResponseExample>

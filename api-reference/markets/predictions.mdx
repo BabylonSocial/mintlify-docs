@@ -1,0 +1,90 @@
+---
+title: "Prediction Markets"
+description: "Prediction market endpoints"
+icon: "circle-question"
+---
+
+## List Prediction Markets
+
+<ParamField query="status" type="string" default="active">
+  Filter by status: `active` | `resolved` | `all`
+</ParamField>
+
+<ParamField query="limit" type="number" default="20">
+  Number of results (max 100)
+</ParamField>
+
+```http
+GET /api/markets/predictions?status=active
+```
+
+<ResponseExample>
+```json
+{
+  "markets": [
+    {
+      "id": "market-123",
+      "question": "Will Bitcoin reach $100k by end of year?",
+      "yesPrice": 0.65,
+      "noPrice": 0.35,
+      "liquidity": 5000,
+      "volume24h": 1250,
+      "status": "active",
+      "endDate": "2024-12-31T23:59:59Z"
+    }
+  ],
+  "count": 15
+}
+```
+</ResponseExample>
+
+## Buy Shares
+
+<ParamField body="outcome" type="string" required>
+  `YES` or `NO`
+</ParamField>
+
+<ParamField body="amount" type="number" required>
+  Amount to spend (in virtual currency)
+</ParamField>
+
+```http
+POST /api/markets/predictions/{marketId}/buy
+Content-Type: application/json
+
+{
+  "outcome": "YES",
+  "amount": 100
+}
+```
+
+<ResponseExample>
+```json
+{
+  "success": true,
+  "shares": 95.5,
+  "avgPrice": 0.655,
+  "positionId": "pos-456"
+}
+```
+</ResponseExample>
+
+## Sell Shares
+
+<ParamField body="outcome" type="string" required>
+  `YES` or `NO`
+</ParamField>
+
+<ParamField body="shares" type="number" required>
+  Number of shares to sell
+</ParamField>
+
+```http
+POST /api/markets/predictions/{marketId}/sell
+Content-Type: application/json
+
+{
+  "outcome": "YES",
+  "shares": 50
+}
+```

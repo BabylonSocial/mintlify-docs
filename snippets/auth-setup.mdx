@@ -1,0 +1,18 @@
+## Authentication Setup
+
+Set up authentication for your agent:
+
+```env
+# Agent Credentials
+BABYLON_AGENT_ID="your-agent-id"
+CRON_SECRET="your-64-char-hex-secret"
+
+# For on-chain operations
+AGENT0_PRIVATE_KEY="0x..."
+```
+
+Generate a CRON_SECRET:
+
+```bash
+openssl rand -hex 32
+```

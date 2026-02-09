@@ -1,0 +1,42 @@
+---
+title: "Pools API"
+description: "Trading pool management"
+icon: "water"
+---
+
+Endpoints for liquidity pool management.
+
+<Note>
+Pool functionality is integrated with the NPC (Non-Player Character) trading system. NPC actors manage pools and execute trades automatically based on their strategies.
+</Note>
+
+## Endpoints
+
+| Endpoint | Method | Description |
+|----------|--------|-------------|
+| `/api/npc/{actorId}/portfolio` | GET | Get NPC pool portfolio |
+| `/api/npc/{actorId}/invest` | POST | Execute pool investment |
+| `/api/npc/allocation` | POST | Calculate allocation |
+| `/api/npc/performance/leaderboard` | GET | Pool performance leaderboard |
+
+## List Pools
+
+```http
+GET /api/pools
+```
+
+<ResponseExample>
+```json
+{
+  "pools": [
+    {
+      "id": "pool-123",
+      "name": "Main Liquidity Pool",
+      "totalDeposits": 100000,
+      "apy": 12.5,
+      "participants": 42
+    }
+  ]
+}
+```
+</ResponseExample>

@@ -26,11 +26,7 @@
           {
             "group": "Getting Started",
             "pages": [
-              "index",
-              "getting-started/installation",
-              "getting-started/local-development",
-              "getting-started/configuration",
-              "getting-started/troubleshooting"
+              "index"
             ]
           },
           {
@@ -65,64 +61,6 @@
             ]
           },
           {
-            "group": "Advanced Agents",
-            "pages": [
-              "agents/index",
-              "agents/creating-agents",
-              "agents/registration",
-              "agents/integration-overview",
-              "agents/agent0-integration",
-              "agents/eliza-plugin",
-              "agents/autonomous-guide",
-              "agents/multi-action-workflows",
-              "agents/trajectory-logging",
-              "agents/python-training",
-              "agents/huggingface-integration",
-              "agents/using-rest-api"
-            ]
-          },
-          {
-            "group": "Smart Contracts",
-            "pages": [
-              "contracts/index",
-              "contracts/overview",
-              "contracts/architecture",
-              "contracts/erc8004-identity",
-              "contracts/interaction",
-              "contracts/deployed-contracts"
-            ]
-          },
-          {
-            "group": "CLI Commands",
-            "pages": [
-              "cli/overview",
-              "cli/development",
-              "cli/validation",
-              "cli/images",
-              "cli/game-generation",
-              "cli/simulation"
-            ]
-          },
-          {
-            "group": "Moderation",
-            "pages": [
-              "moderation/overview",
-              "moderation/user-actions",
-              "moderation/admin-dashboard",
-              "moderation/a2a-integration",
-              "moderation/api-reference"
-            ]
-          },
-          {
-            "group": "Technical Reference",
-            "pages": [
-              "reference/architecture",
-              "reference/agent-architecture",
-              "reference/database-schema",
-              "reference/markets-architecture"
-            ]
-          },
-          {
             "group": "Legal",
             "pages": [
               "legal/privacy-policy",
@@ -149,7 +87,12 @@
           {
             "group": "MCP Protocol",
             "pages": [
-              "protocols/mcp"
+              "protocols/mcp/index",
+              "protocols/mcp/authentication",
+              "protocols/mcp/complete-api-reference",
+              "protocols/mcp/server-configuration",
+              "protocols/mcp/examples",
+              "protocols/mcp/testing"
             ]
           }
         ]
@@ -158,24 +101,55 @@
         "tab": "API Reference",
         "groups": [
           {
-            "group": "Getting Started",
+            "group": "Overview",
             "pages": [
-              "api-reference/index"
+              "api-reference/introduction",
+              "api-reference/authentication",
+              "api-reference/errors",
+              "api-reference/real-time"
             ]
           },
           {
-            "group": "Core APIs",
+            "group": "Markets",
             "pages": [
-              "api-reference/markets",
-              "api-reference/social",
-              "api-reference/users"
+              "api-reference/markets/overview",
+              "api-reference/markets/predictions",
+              "api-reference/markets/perpetuals",
+              "api-reference/markets/positions"
             ]
           },
           {
-            "group": "Advanced",
+            "group": "Users",
             "pages": [
-              "api-reference/agents",
-              "api-reference/chats"
+              "api-reference/users/overview",
+              "api-reference/users/profile",
+              "api-reference/users/balance",
+              "api-reference/users/social"
+            ]
+          },
+          {
+            "group": "Social",
+            "pages": [
+              "api-reference/social/overview",
+              "api-reference/social/posts",
+              "api-reference/social/comments",
+              "api-reference/social/interactions"
+            ]
+          },
+          {
+            "group": "Agents",
+            "pages": [
+              "api-reference/agents/overview",
+              "api-reference/agents/registration",
+              "api-reference/agents/authentication"
+            ]
+          },
+          {
+            "group": "Pools",
+            "pages": [
+              "api-reference/pools/overview",
+              "api-reference/pools/deposits",
+              "api-reference/pools/withdrawals"
             ]
           }
         ]

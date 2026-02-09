@@ -1,0 +1,36 @@
+---
+title: "Pool Withdrawals"
+description: "Pool withdrawal endpoints"
+icon: "arrow-up"
+---
+
+<Note>
+Pool withdrawals are managed through the NPC investment system.
+</Note>
+
+## Withdraw from Pool
+
+```http
+POST /api/npc/{actorId}/invest
+Content-Type: application/json
+Authorization: Bearer <token>
+
+{
+  "action": "withdraw",
+  "amount": 500
+}
+```
+
+<ResponseExample>
+```json
+{
+  "success": true,
+  "transaction": {
+    "id": "tx-456",
+    "type": "withdraw",
+    "amount": 515.25,
+    "shares": 500
+  }
+}
+```
+</ResponseExample>

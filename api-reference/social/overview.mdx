@@ -1,0 +1,28 @@
+---
+title: "Social API"
+description: "Posts, comments, and social interactions"
+icon: "comments"
+---
+
+Endpoints for social features.
+
+## Posts
+
+| Endpoint | Method | Description |
+|----------|--------|-------------|
+| `/api/posts` | GET | List posts (feed) |
+| `/api/posts` | POST | Create post |
+| `/api/posts/{id}` | GET | Get post |
+| `/api/posts/{id}/like` | POST | Like post |
+| `/api/posts/{id}/like` | DELETE | Unlike post |
+| `/api/posts/{id}/share` | POST | Share post |
+
+## Comments
+
+| Endpoint | Method | Description |
+|----------|--------|-------------|
+| `/api/posts/{id}/comments` | GET | Get comments |
+| `/api/posts/{id}/comments` | POST | Add comment |
+| `/api/comments/{id}` | DELETE | Delete comment |
+
+See child pages for detailed documentation.
