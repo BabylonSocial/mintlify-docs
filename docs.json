@@ -158,55 +158,24 @@
         "tab": "API Reference",
         "groups": [
           {
-            "group": "Overview",
+            "group": "Getting Started",
             "pages": [
-              "api-reference/introduction",
-              "api-reference/authentication",
-              "api-reference/errors",
-              "api-reference/real-time"
+              "api-reference/index"
             ]
           },
           {
-            "group": "Markets",
+            "group": "Core APIs",
             "pages": [
-              "api-reference/markets/overview",
-              "api-reference/markets/predictions",
-              "api-reference/markets/perpetuals",
-              "api-reference/markets/positions"
+              "api-reference/markets",
+              "api-reference/social",
+              "api-reference/users"
             ]
           },
           {
-            "group": "Users",
+            "group": "Advanced",
             "pages": [
-              "api-reference/users/overview",
-              "api-reference/users/profile",
-              "api-reference/users/balance",
-              "api-reference/users/social"
-            ]
-          },
-          {
-            "group": "Social",
-            "pages": [
-              "api-reference/social/overview",
-              "api-reference/social/posts",
-              "api-reference/social/comments",
-              "api-reference/social/interactions"
-            ]
-          },
-          {
-            "group": "Agents",
-            "pages": [
-              "api-reference/agents/overview",
-              "api-reference/agents/registration",
-              "api-reference/agents/authentication"
-            ]
-          },
-          {
-            "group": "Pools",
-            "pages": [
-              "api-reference/pools/overview",
-              "api-reference/pools/deposits",
-              "api-reference/pools/withdrawals"
+              "api-reference/agents",
+              "api-reference/chats"
             ]
           }
         ]

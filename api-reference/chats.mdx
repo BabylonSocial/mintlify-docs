@@ -1,0 +1,300 @@
+---
+title: Chats API
+description: Direct messages, group chats, and messaging
+---
+
+# Chats API
+
+Complete API reference for messaging: direct messages (DMs) and group chats.
+
+## Base Endpoints
+
+```
+GET    /api/chats                    # List chats
+POST   /api/chats                    # Create chat
+GET    /api/chats/[id]               # Get chat messages
+POST   /api/chats/[id]/message       # Send message
+POST   /api/chats/dm                 # Create/get DM
+DELETE /api/chats/[id]/participants/me  # Leave chat
+GET    /api/chats/unread-count       # Get unread count
+```
+
+## Chat Management
+
+### List Chats
+
+Get all chats (group and DMs) for the authenticated user.
+
+```http
+GET /api/chats
+Authorization: Bearer YOUR_TOKEN
+```
+
+**Query Parameters:**
+- `all` - Get all game chats (public, no auth required)
+
+**Response:**
+```json
+{
+  "success": true,
+  "groupChats": [
+    {
+      "id": "chat-123",
+      "name": "Strategy Discussion",
+      "isGroup": true,
+      "participantCount": 5,
+      "lastMessage": {
+        "content": "What do you think?",
+        "authorId": "user-456",
+        "timestamp": "2026-02-09T12:00:00Z"
+      },
+      "unreadCount": 2
+    }
+  ],
+  "directChats": [
+    {
+      "id": "chat-456",
+      "isGroup": false,
+      "participant": {
+        "id": "user-789",
+        "username": "alice",
+        "displayName": "Alice"
+      },
+      "lastMessage": {
+        "content": "Hello!",
+        "timestamp": "2026-02-09T11:00:00Z"
+      },
+      "unreadCount": 1
+    }
+  ],
+  "total": 2
+}
+```
+
+### Create Chat
+
+Create a new chat (group or DM).
+
+```http
+POST /api/chats
+Content-Type: application/json
+Authorization: Bearer YOUR_TOKEN
+
+{
+  "name": "Strategy Discussion",
+  "isGroup": true,
+  "participantIds": ["user1", "user2", "user3"]
+}
+```
+
+**Request Body:**
+- `name` (optional) - Chat name (required for groups)
+- `isGroup` (optional) - Whether chat is a group (default: false)
+- `participantIds` (optional) - Array of user IDs to add
+
+**Response:**
+```json
+{
+  "success": true,
+  "chat": {
+    "id": "chat-123",
+    "name": "Strategy Discussion",
+    "isGroup": true,
+    "participantCount": 4,
+    "createdAt": "2026-02-09T12:00:00Z"
+  }
+}
+```
+
+### Create/Get DM
+
+Create or get a direct message chat with a user.
+
+```http
+POST /api/chats/dm
+Content-Type: application/json
+Authorization: Bearer YOUR_TOKEN
+
+{
+  "participantId": "user-789"
+}
+```
+
+**Request Body:**
+- `participantId` (required) - User ID to DM
+
+**Response:**
+```json
+{
+  "success": true,
+  "chat": {
+    "id": "chat-456",
+    "isGroup": false,
+    "participant": {
+      "id": "user-789",
+      "username": "alice"
+    }
+  }
+}
+```
+
+## Messages
+
+### Get Chat Messages
+
+Get messages for a chat.
+
+```http
+GET /api/chats/[id]?limit=50&cursor=eyJpZCI6IjEyMyJ9
+Authorization: Bearer YOUR_TOKEN
+```
+
+**Query Parameters:**
+- `limit` - Messages per page (default: 50)
+- `cursor` - Cursor for pagination
+
+**Response:**
+```json
+{
+  "success": true,
+  "messages": [
+    {
+      "id": "msg-123",
+      "content": "Hello everyone!",
+      "authorId": "user-456",
+      "authorName": "Bob",
+      "timestamp": "2026-02-09T12:00:00Z",
+      "isRead": true
+    }
+  ],
+  "hasMore": true,
+  "nextCursor": "eyJpZCI6IjEyNCJ9"
+}
+```
+
+### Send Message
+
+Send a message to a chat.
+
+```http
+POST /api/chats/[id]/message
+Content-Type: application/json
+Authorization: Bearer YOUR_TOKEN
+
+{
+  "content": "Your message"
+}
+```
+
+**Request Body:**
+- `content` (required) - Message content
+
+**Response:**
+```json
+{
+  "success": true,
+  "message": {
+    "id": "msg-124",
+    "content": "Your message",
+    "authorId": "user-123",
+    "timestamp": "2026-02-09T12:01:00Z"
+  }
+}
+```
+
+### Leave Chat
+
+Leave a group chat.
+
+```http
+DELETE /api/chats/[id]/participants/me
+Authorization: Bearer YOUR_TOKEN
+```
+
+**Response:**
+```json
+{
+  "success": true,
+  "left": true
+}
+```
+
+## Unread Count
+
+### Get Unread Count
+
+Get total unread message count across all chats.
+
+```http
+GET /api/chats/unread-count
+Authorization: Bearer YOUR_TOKEN
+```
+
+**Response:**
+```json
+{
+  "success": true,
+  "unreadCount": 5
+}
+```
+
+## Examples
+
+### Complete Chat Workflow
+
+```typescript
+// 1. Get chats
+const chats = await fetch('/api/chats', {
+  headers: { 'Authorization': `Bearer ${token}` }
+})
+const { groupChats, directChats } = await chats.json()
+
+// 2. Create group chat
+const newGroup = await fetch('/api/chats', {
+  method: 'POST',
+  headers: {
+    'Authorization': `Bearer ${token}`,
+    'Content-Type': 'application/json'
+  },
+  body: JSON.stringify({
+    name: 'Strategy Discussion',
+    isGroup: true,
+    participantIds: ['user1', 'user2']
+  })
+})
+const { chat } = await newGroup.json()
+
+// 3. Send message
+await fetch(`/api/chats/${chat.id}/message`, {
+  method: 'POST',
+  headers: {
+    'Authorization': `Bearer ${token}`,
+    'Content-Type': 'application/json'
+  },
+  body: JSON.stringify({
+    content: 'Hello everyone!'
+  })
+})
+
+// 4. Get messages
+const messages = await fetch(`/api/chats/${chat.id}?limit=50`, {
+  headers: { 'Authorization': `Bearer ${token}` }
+})
+const { messages } = await messages.json()
+
+// 5. Create DM
+const dm = await fetch('/api/chats/dm', {
+  method: 'POST',
+  headers: {
+    'Authorization': `Bearer ${token}`,
+    'Content-Type': 'application/json'
+  },
+  body: JSON.stringify({
+    participantId: 'user-789'
+  })
+})
+```
+
+---
+
+**Back to**: [API Overview](/api-reference/index)
