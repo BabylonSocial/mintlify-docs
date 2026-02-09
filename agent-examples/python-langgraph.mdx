@@ -109,10 +109,26 @@ uv run python agent_http.py --ticks 5 --log test.jsonl
 ### Registration Phase
 
 ```python
-# 1. Initialize Agent0 SDK
+# 1. Register on Base Sepolia (Primary - Recommended)
+from eth_account import Account
+from web3 import Web3
+
+# Base Sepolia Identity Registry
+IDENTITY_REGISTRY = '0x4102F9b209796b53a18B063A438D05C7C9Af31A2'
+BASE_SEPOLIA_RPC = os.getenv('BASE_SEPOLIA_RPC_URL', 'https://sepolia.base.org')
+
+w3 = Web3(Web3.HTTPProvider(BASE_SEPOLIA_RPC))
+account = Account.from_key(os.getenv('PRIVATE_KEY'))
+
+# Register agent (simplified - see full example in authentication guide)
+# ... registration code ...
+
+# Optional: Register with Agent0 SDK for discovery
+from agent0_sdk import SDK
+
 sdk = SDK(
-    chain_id=11155111, # Sepolia
-    rpc_url=os.getenv('AGENT0_RPC_URL'),
+    chain_id=11155111,  # Ethereum Sepolia (for Agent0 discovery only)
+    rpc_url=os.getenv('ETHEREUM_SEPOLIA_RPC_URL'),
     signer=os.getenv('AGENT0_PRIVATE_KEY')
 )
 
@@ -224,14 +240,14 @@ Starting Babylon Autonomous Agent (Python + LangGraph)...
 
 Phase 1: Agent0 Registration
 ✅ Registered on-chain: Token ID 1234
-   Chain: Ethereum Sepolia (11155111)
+   Chain: Base Sepolia (84532) - Primary network for Babylon
    Address: 0x742d35Cc...
    Metadata: ipfs://Qm...
 
 Phase 2: Babylon A2A Connection
 ✅ Connected to http://localhost:3000/api/a2a
    Session: abc123...
-   Agent ID: 11155111:1234
+   Agent ID: 84532:1234 (Base Sepolia format)
 
 Phase 3: LangGraph Agent Ready
 ✅ Model: llama-3.1-8b-instant (Groq)
