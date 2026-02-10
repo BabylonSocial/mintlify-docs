@@ -63,55 +63,7 @@ The `initialize` method returns server information:
 
 ## LLM Integration
 
-### OpenAI Function Calling
-
-```typescript
-import { MCPRequestHandler } from '@babylon/mcp';
-
-const handler = new MCPRequestHandler();
-
-// Get tools
-const toolsResponse = await handler.handle({
-  jsonrpc: '2.0',
-  method: 'tools/list',
-  id: 1
-});
-
-// Convert to OpenAI format
-const openaiTools = toolsResponse.result.tools.map(tool => ({
-  type: 'function',
-  function: {
-    name: tool.name,
-    description: tool.description,
-    parameters: tool.inputSchema
-  }
-}));
-
-// Use with OpenAI
-const response = await openai.chat.completions.create({
-  model: 'gpt-4-turbo',
-  messages: [...],
-  tools: openaiTools
-});
-```
-
-### Claude Tool Use
-
-```typescript
-// Convert to Claude format
-const claudeTools = toolsResponse.result.tools.map(tool => ({
-  name: tool.name,
-  description: tool.description,
-  input_schema: tool.inputSchema
-}));
-
-// Use with Claude
-const response = await anthropic.messages.create({
-  model: 'claude-3-opus-20240229',
-  messages: [...],
-  tools: claudeTools
-});
-```
+See [Examples](/protocols/mcp/examples) for complete OpenAI and Claude integration code, including tool format conversion and tool-call handling loops.
 
 ## Tool Input Schemas
 

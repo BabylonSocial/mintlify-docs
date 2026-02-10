@@ -14,52 +14,31 @@ import { MCPRequestHandler } from '@babylon/mcp';
 const handler = new MCPRequestHandler();
 const authContext = { apiKey: process.env.BABYLON_API_KEY! };
 
+const protocolTests = [
+  {
+    label: 'Initialize',
+    request: {
+      method: 'initialize',
+      params: {
+        protocolVersion: '2024-11-05',
+        capabilities: {},
+        clientInfo: { name: 'test-client', version: '1.0.0' }
+      }
+    }
+  },
+  { label: 'Ping',       request: { method: 'ping' } },
+  { label: 'Tools list', request: { method: 'tools/list' } }
+];
+
 async function testMCP() {
-  // Test initialize
-  const initResponse = await handler.handle({
-    jsonrpc: '2.0',
-    method: 'initialize',
-    params: {
-      protocolVersion: '2024-11-05',
-      capabilities: {},
-      clientInfo: { name: 'test-client', version: '1.0.0' }
-    },
-    id: 1
-  });
-  
-  if (initResponse.error) {
-    console.error('❌ Initialize failed:', initResponse.error);
-    return false;
+  for (const [i, { label, request }] of protocolTests.entries()) {
+    const response = await handler.handle({ jsonrpc: '2.0', ...request, id: i + 1 });
+    if (response.error) {
+      console.error(`❌ ${label} failed:`, response.error);
+      return false;
+    }
+    console.log(`✅ ${label}: OK`);
   }
-  console.log('✅ Initialize: OK');
-  console.log('   Protocol:', initResponse.result.protocolVersion);
-  
-  // Test ping
-  const pingResponse = await handler.handle({
-    jsonrpc: '2.0',
-    method: 'ping',
-    id: 2
-  });
-  
-  if (pingResponse.error) {
-    console.error('❌ Ping failed:', pingResponse.error);
-    return false;
-  }
-  console.log('✅ Ping: OK');
-  
-  // Test tools/list
-  const toolsResponse = await handler.handle({
-    jsonrpc: '2.0',
-    method: 'tools/list',
-    id: 3
-  });
-  
-  if (toolsResponse.error) {
-    console.error('❌ Tools list failed:', toolsResponse.error);
-    return false;
-  }
-  console.log(`✅ Tools list: ${toolsResponse.result.tools.length} tools available`);
-  
   return true;
 }
 
