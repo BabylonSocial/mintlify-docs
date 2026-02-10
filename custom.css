@@ -33,3 +33,47 @@ pre::-webkit-scrollbar-thumb {
 .prose pre::-webkit-scrollbar-thumb {
   background: #0066FF;
 }
+
+/* Dark mode scrollbar variants */
+.dark ::-webkit-scrollbar-thumb {
+  background: #3B82F6;
+}
+
+.dark ::-webkit-scrollbar-thumb:hover {
+  background: #60A5FA;
+}
+
+.dark * {
+  scrollbar-color: #3B82F6 transparent;
+}
+
+.dark pre::-webkit-scrollbar-thumb {
+  background: #3B82F6;
+}
+
+.dark .prose pre::-webkit-scrollbar-thumb {
+  background: #3B82F6;
+}
+
+/* Fallback dark mode via media query */
+@media (prefers-color-scheme: dark) {
+  ::-webkit-scrollbar-thumb {
+    background: #3B82F6;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: #60A5FA;
+  }
+
+  * {
+    scrollbar-color: #3B82F6 transparent;
+  }
+
+  pre::-webkit-scrollbar-thumb {
+    background: #3B82F6;
+  }
+
+  .prose pre::-webkit-scrollbar-thumb {
+    background: #3B82F6;
+  }
+}

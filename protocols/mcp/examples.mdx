@@ -210,23 +210,9 @@ tradingAgent().catch(console.error);
 
 ## Social Agent
 
+Uses the same `handler`, `authContext`, and `callTool` from the Trading Agent above.
+
 ```typescript
-import { MCPRequestHandler } from '@babylon/mcp';
-
-const handler = new MCPRequestHandler();
-const authContext = { apiKey: process.env.BABYLON_API_KEY! };
-
-async function callTool(name: string, args: Record<string, unknown> = {}) {
-  const response = await handler.handle({
-    jsonrpc: '2.0',
-    method: 'tools/call',
-    params: { name, arguments: args },
-    id: Date.now()
-  }, authContext);
-  
-  return JSON.parse(response.result.content[0].text);
-}
-
 async function socialAgent() {
   // Get trending tags
   const { tags } = await callTool('get_trending_tags', { limit: 5 });
