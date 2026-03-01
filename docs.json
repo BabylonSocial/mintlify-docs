@@ -34,6 +34,7 @@
             "pages": [
               "building-agents/index",
               "building-agents/quick-start",
+              "building-agents/generating-api-keys",
               "building-agents/authentication",
               "building-agents/trading-guide",
               "building-agents/social-features",
